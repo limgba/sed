@@ -19,7 +19,7 @@ num=1
 sed -i ''"$num"',/b/s/a/b/g' file
 
 #use grep
-sed =n '/a/p' file | grep -o -E "a.c"
+sed -n '/a/p' file | grep -o -E "a.c"
 
 #sed -n -e '/<title>/p' -e '/<text>/,/<\/text>/p' from.xml
 sed -n 'w 111.xml' from.xml

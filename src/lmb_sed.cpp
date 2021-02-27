@@ -6,10 +6,23 @@
 
 bool lmb::sed(const std::string& file_name, char edit_type, const std::string& regex_str, const std::string& new_str)
 {
+	std::vector<char> edit_type_vec
+	{
+		'a',
+		'i',
+		's',
+		'd',
+	};
+	auto vec_it = std::find(edit_type_vec.begin(), edit_type_vec.end(), edit_type);
+	if (edit_type_vec.end() == vec_it)
+	{
+		std::cout << "edit_type error" << std::endl;
+		return false;
+	}
 	std::ifstream ifs(file_name);
 	if (!ifs.is_open())
 	{
-		std::cout << "open fail" << file_name << std::endl;
+		std::cout << "ifs open fail" << file_name << std::endl;
 		return false;
 	}
 	std::vector<std::string> strs;
@@ -20,6 +33,11 @@ bool lmb::sed(const std::string& file_name, char edit_type, const std::string& r
 	}
 	ifs.close();
 	std::ofstream ofs(file_name, std::ios::out | std::ios::trunc);
+	if (!ofs.is_open())
+	{
+		std::cout << "ofs open fail" << file_name << std::endl;
+		return false;
+	}
 	std::regex rg(regex_str);
 	std::string next_line("\n");
 	for (auto& str : strs)
@@ -61,6 +79,12 @@ bool lmb::sed(const std::string& file_name, char edit_type, const std::string& r
 				ofs.write(str.c_str(), str.size());
 				ofs.write(next_line.c_str(), next_line.size());
 			}
+		}
+		break;
+		default:
+		{
+			ofs.write(str.c_str(), str.size());
+			ofs.write(next_line.c_str(), next_line.size());
 		}
 		break;
 		}

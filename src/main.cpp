@@ -2,6 +2,6 @@
 
 int main(int argc, char* argv[])
 {
-	lmb::sed("file", 'd', "123", "456");
+	lmb::sed("file", 'd', "123", "123");
 	return 0;
 }

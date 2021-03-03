@@ -9,6 +9,7 @@ bool lmb::sed(const std::string& file_name, char edit_type, const std::string& r
 	std::vector<char> edit_type_vec
 	{
 		'a',
+		'O',
 		'i',
 		's',
 		'd',
@@ -39,6 +40,7 @@ bool lmb::sed(const std::string& file_name, char edit_type, const std::string& r
 		return false;
 	}
 	std::regex rg(regex_str);
+	std::smatch sm;
 	std::string next_line("\n");
 	for (auto& str : strs)
 	{
@@ -48,12 +50,22 @@ bool lmb::sed(const std::string& file_name, char edit_type, const std::string& r
 		{
 			ofs.write(str.c_str(), str.size());
 			ofs.write(next_line.c_str(), next_line.size());
-			std::smatch sm;
 			if (std::regex_match(str, sm, rg))
 			{
 				ofs.write(new_str.c_str(), new_str.size());
 				ofs.write(next_line.c_str(), next_line.size());
 			}
+		}
+		break;
+		case 'O':
+		{
+			if (std::regex_match(str, sm, rg))
+			{
+				ofs.write(new_str.c_str(), new_str.size());
+				ofs.write(next_line.c_str(), next_line.size());
+			}
+			ofs.write(str.c_str(), str.size());
+			ofs.write(next_line.c_str(), next_line.size());
 		}
 		break;
 		case 'i':
@@ -73,8 +85,7 @@ bool lmb::sed(const std::string& file_name, char edit_type, const std::string& r
 		break;
 		case 'd':
 		{
-			std::smatch sm;
-			if (!std::regex_match(str, sm, rg))
+			if (!std::regex_search(str, sm, rg))
 			{
 				ofs.write(str.c_str(), str.size());
 				ofs.write(next_line.c_str(), next_line.size());

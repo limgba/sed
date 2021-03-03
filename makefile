@@ -11,7 +11,7 @@ lib:=$(patsubst lib%.so,-l%, $(lib)) -lpthread
 staticlib=$(shell find $(libdir) -name "*.a")
 
 CXX=g++
-CXXFLAGS=-std=c++11 -g -O3 -Wall 
+CXXFLAGS=-std=c++17 -g -O3 -Wall 
 CXXLIB=$(incdir) -L$(libdir) $(lib)
 
 $(target):$(obj)

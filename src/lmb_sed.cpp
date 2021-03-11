@@ -50,7 +50,7 @@ bool lmb::sed(const std::string& file_name, char edit_type, const std::string& r
 		{
 			ofs.write(str.c_str(), str.size());
 			ofs.write(next_line.c_str(), next_line.size());
-			if (std::regex_match(str, sm, rg))
+			if (std::regex_search(str, sm, rg))
 			{
 				ofs.write(new_str.c_str(), new_str.size());
 				ofs.write(next_line.c_str(), next_line.size());
@@ -59,7 +59,7 @@ bool lmb::sed(const std::string& file_name, char edit_type, const std::string& r
 		break;
 		case 'O':
 		{
-			if (std::regex_match(str, sm, rg))
+			if (std::regex_search(str, sm, rg))
 			{
 				ofs.write(new_str.c_str(), new_str.size());
 				ofs.write(next_line.c_str(), next_line.size());

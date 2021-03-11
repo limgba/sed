@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<config>
+	<audit_server_attr>
+		<data>
+			<param1>999</param1>
+			<gongji>999</gongji>
+			<fangyu>999</fangyu>
+			<reward_list>999</reward_list>
+			<drop_list>999</drop_list>
+			<item_id>999</item_id>
+			<itemid>999</itemid>
+			<money>999</money>
+			<capability>999</capability>
+		</data>
+	</audit_server_attr>
+</config>

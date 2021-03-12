@@ -4,7 +4,7 @@
 #include <regex>
 
 GenBase::GenBase(const std::filesystem::path& gen_path)
-	: m_gen_path(gen_path), m_progress(0), m_init_member_count(0)
+	: m_gen_path(gen_path)
 {
 	m_def_name = this->ToDefName(m_gen_path.stem());
 	m_file_name = this->ToFileName(m_gen_path.stem());
@@ -15,6 +15,7 @@ void GenBase::Replace()
 {
 	lmb::sed(m_gen_path.string(), 's', "%%def_name%%", m_def_name);
 	lmb::sed(m_gen_path.string(), 's', "%%class_name%%", m_class_name);
+	lmb::sed(m_gen_path.string(), 's', "%%file_name%%", m_file_name);
 }
 
 
@@ -87,7 +88,27 @@ std::string GenBase::CalcType(const std::string& in_str, bool& need_init)
 	return out_str;
 }
 
-void GenBase::Gen0(const std::string& struct_name) {}
-void GenBase::Gen1(const std::string& member_name) {}
+void GenBase::Gen0(const std::string& struct_name)
+{
+	const std::string hump_struct_name = this->ToClassName(struct_name);
+	m_sub_class_name = m_class_name + hump_struct_name;
+	m_member_name = struct_name;
+	m_key_vec.clear();
+	m_key_name_vec.clear();
+}
+void GenBase::Gen1(const std::string& member_name)
+{
+	std::smatch sm;
+	if (std::regex_search(member_name, sm, std::regex("index")))
+	{
+		m_key_vec.push_back("std::vector<");
+		m_key_name_vec.push_back(member_name);
+	}
+	else if (std::regex_search(member_name, sm, std::regex("key")))
+	{
+		m_key_vec.push_back("std::map<int, ");
+		m_key_name_vec.push_back(member_name);
+	}
+}
 void GenBase::Gen2() {}
 

@@ -39,7 +39,7 @@ void gen(const std::filesystem::path& xml_path, const std::filesystem::path& gen
 	}
 	else if (gen_path.extension().string() == ".cpp")
 	{
-		gen_base.reset(new GenBase(gen_path));
+		gen_base.reset(new GenCpp(gen_path));
 	}
 	else
 	{

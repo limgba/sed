@@ -2,6 +2,7 @@
 #define __GENBASE_H__
 
 #include <string>
+#include <vector>
 #include <filesystem>
 
 class GenBase
@@ -23,8 +24,10 @@ protected:
 	std::string m_def_name;
 	std::string m_file_name;
 	std::string m_class_name;
-	int m_progress;
-	int m_init_member_count;
+	std::string m_sub_class_name;
+	std::string m_member_name;
+	std::vector<std::string> m_key_vec;
+	std::vector<std::string> m_key_name_vec;
 };
 
 #endif

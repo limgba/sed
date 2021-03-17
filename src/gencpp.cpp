@@ -1,6 +1,7 @@
 #include "gencpp.h"
 #include "lmb_sed.h"
 #include <regex>
+#include <stdio.h>
 
 GenCpp::GenCpp(const std::filesystem::path& gen_path)
 	: GenBase(gen_path)
@@ -30,7 +31,7 @@ void GenCpp::Gen0(const std::string& struct_name)
 		std::string insert_str = 
 		"int " + m_class_name + "::Init" + m_sub_class_name + "(PugiXmlNode RootElement)\n" + 
 		"{\n" + 
-		"\tdecltype(m_" + this->ToFileName(m_member_name) + "_cfg_container) tmp_container;\n" + 
+		"\tdecltype(" + m_member_name + ") tmp_container;\n" + 
 		"\tPugiXmlNode dataElement = RootElement.child(\"data\");\n" + 
 		"\twhile (!dataElement.empty())\n" + 
 		"\t{\n" + 
@@ -104,6 +105,7 @@ void GenCpp::Gen1(const std::string& member_name)
 void GenCpp::Gen2()
 {
 	GenBase::Gen2();
+	std::smatch sm;
 	{
 		std::string insert_str = 
 		"\t\tauto& container_0 = tmp_container;";
@@ -113,7 +115,7 @@ void GenCpp::Gen2()
 	if (!m_key_vec.empty())
 	{
 		std::string insert_str = 
-		"\tauto& container_0 = m_" + this->ToFileName(m_member_name)+ "_cfg_container;";
+		"\tauto& container_0 = " + m_member_name + ";";
 		lmb::sed(m_gen_path.string(), 'O', "%%getfunc_content%%", insert_str);
 	}
 	
@@ -126,6 +128,7 @@ void GenCpp::Gen2()
 		const std::string& key_name_str = m_key_name_vec[i];
 		if (key_str.find("vector") != std::string::npos)
 		{
+			if (std::regex_search(key_name_str, sm, std::regex("index")))
 			{
 				std::string insert_str = 
 				"\tif (" + key_name_str + " < 0 || (size_t)" + key_name_str + " >= container_" + i_str + ".size())\n" + 
@@ -134,6 +137,27 @@ void GenCpp::Gen2()
 				"\t}\n" +
 				"\tauto& container_" + count_str + " = container_" + i_str + "[" + key_name_str + "];\n";
 				lmb::sed(m_gen_path.string(), 'O', "%%getfunc_content%%", insert_str);
+			}
+			else if (std::regex_search(key_name_str, sm, std::regex("range")))
+			{
+				{
+					std::string insert_str = 
+					"\tdecltype(container_" + i_str + ")* container_" + count_str + "_ptr = nullptr;\n" + 
+					"\tfor (container_" + i_str + "_it = container_" + i_str + ".rbegin(); container_" + i_str + "_it != container_" + i_str + ".rend(); ++container_" + i_str + "_it)\n"
+					"\t{\n"
+					"\t\tif (" + key_name_str + " >= container_" + i_str + "_it->" + key_name_str + ")\n"
+					"\t\t{\n"
+					"\t\t\tcontainer_" + count_str + "_ptr = &(*container_" + i_str + "_it);\n"
+					"\t\t\tbreak;\n"
+					"\t\t}\n"
+					"\t}\n"
+					"\tif (nullptr == container_" + count_str + "_ptr)\n"
+					"\t{\n"
+					"\t\treturn nullptr;\n"
+					"\t}\n"
+					"\tauto& container_" + count_str + " = *container_" + count_str + "_ptr;\n";
+					lmb::sed(m_gen_path.string(), 'O', "%%getfunc_content%%", insert_str);
+				}
 			}
 
 			{
@@ -204,13 +228,13 @@ void GenCpp::Gen2()
 	{
 		{
 			std::string insert_str = 
-			"\treturn m_" + this->ToFileName(m_member_name)+ "_cfg_container;";
+			"\treturn " + m_member_name + ";";
 			lmb::sed(m_gen_path.string(), 'O', "%%getfunc_content%%", insert_str);
 		}
 		lmb::sed(m_gen_path.string(), 's', "%%getfunc_pointer%%", "&");
 		{
 			std::string insert_str = 
-			"\t\tm_" + this->ToFileName(m_member_name) + "_cfg_container = cfg;\n" +
+			"\t\t" + m_member_name + " = cfg;\n" +
 			"\t\tbreak;\n";
 			lmb::sed(m_gen_path.string(), 'O', "%%initfunc_content%%", insert_str);
 		}
@@ -220,7 +244,7 @@ void GenCpp::Gen2()
 		lmb::sed(m_gen_path.string(), 's', "%%getfunc_pointer%%", "*");
 		{
 			std::string insert_str = 
-			"\tm_" + this->ToFileName(m_member_name)+ "_cfg_container = tmp_container;";
+			"\t" + m_member_name+ " = tmp_container;";
 			lmb::sed(m_gen_path.string(), 'O', "%%initfunc_end%%", insert_str);
 		}
 	}

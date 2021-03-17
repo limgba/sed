@@ -2,9 +2,9 @@
 <config>
 	<audit_server_attr>
 		<data>
-			<param1_index>999</param1_index>
+			<param1_range>999</param1_range>
 			<gongji_key>999</gongji_key>
-			<fangyu_key>999</fangyu_key>
+			<fangyu_range>999</fangyu_range>
 			<reward_list_index>999</reward_list_index>
 			<drop_list>999</drop_list>
 			<item_id>999</item_id>

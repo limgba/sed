@@ -62,7 +62,7 @@ void GenHead::Gen2()
 		{
 			member_name += key;
 		}
-		member_name = member_name + m_sub_class_name + std::string(m_key_vec.size(), '>') + " m_" + this->ToFileName(m_member_name) + "_cfg_container;";
+		member_name = member_name + m_sub_class_name + std::string(m_key_vec.size(), '>') + m_member_name + ";";
 		lmb::sed(m_gen_path.string(), 'O', "%%member_name%%", member_name);
 	}
 

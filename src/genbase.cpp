@@ -92,7 +92,7 @@ void GenBase::Gen0(const std::string& struct_name)
 {
 	const std::string hump_struct_name = this->ToClassName(struct_name);
 	m_sub_class_name = m_class_name + hump_struct_name + "Cfg";
-	m_member_name = struct_name;
+	m_member_name = "m_" + this->ToFileName(struct_name) + "_cfg_container";
 	m_key_vec.clear();
 	m_key_name_vec.clear();
 	m_member_count = 0;
@@ -100,7 +100,7 @@ void GenBase::Gen0(const std::string& struct_name)
 void GenBase::Gen1(const std::string& member_name)
 {
 	std::smatch sm;
-	if (std::regex_search(member_name, sm, std::regex("index")))
+	if (std::regex_search(member_name, sm, std::regex("index|range")))
 	{
 		m_key_vec.push_back("std::vector<");
 		m_key_name_vec.push_back(member_name);

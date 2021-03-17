@@ -24,7 +24,7 @@ void GenHead::Gen0(const std::string& struct_name)
 
 	{
 		std::string insert_str = 
-		"\tint Init" + m_sub_class_name + "Cfg(PugiXmlNode RootElement);";
+		"\tint Init" + m_sub_class_name + "(PugiXmlNode RootElement);";
 		lmb::sed(m_gen_path.string(), 'O', "%%initfunc_name%%", insert_str);
 	}
 
@@ -57,18 +57,18 @@ void GenHead::Gen2()
 	lmb::sed(m_gen_path.string(), 'd', "%%struct_member%%", "");
 
 	{
-		std::string member_name;
+		std::string member_name = "\t";
 		for (const auto& key : m_key_vec)
 		{
 			member_name += key;
 		}
-		member_name = member_name + m_sub_class_name + std::string(m_key_vec.size(), '>') + " m_" + this->ToFileName(m_member_name) + "cfg_container;";
+		member_name = member_name + m_sub_class_name + std::string(m_key_vec.size(), '>') + " m_" + this->ToFileName(m_member_name) + "_cfg_container;";
 		lmb::sed(m_gen_path.string(), 'O', "%%member_name%%", member_name);
 	}
 
 	{
 		std::string insert_str = 
-		"\tconst " + m_sub_class_name + "* Get" + m_sub_class_name + "Cfg(";
+		"\tconst " + m_sub_class_name + "%%getfunc_pointer%% Get" + m_sub_class_name + "(";
 		for (size_t i = 0; i < m_key_name_vec.size(); ++i)
 		{
 			const auto& key = m_key_name_vec[i];
@@ -80,5 +80,21 @@ void GenHead::Gen2()
 		}
 		insert_str += ");";
 		lmb::sed(m_gen_path.string(), 'O', "%%getfunc_name%%", insert_str);
+		if (m_key_vec.empty())
+		{
+			lmb::sed(m_gen_path.string(), 's', "%%getfunc_pointer%%", "&");
+		}
+		else
+		{
+			lmb::sed(m_gen_path.string(), 's', "%%getfunc_pointer%%", "*");
+		}
 	}
+}
+
+void GenHead::Delete()
+{
+	GenBase::Delete();
+	lmb::sed(m_gen_path.string(), 'd', "%%struct_name%%", "");
+	lmb::sed(m_gen_path.string(), 'd', "%%member_name%%", "");
+
 }

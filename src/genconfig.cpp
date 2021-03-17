@@ -91,4 +91,5 @@ void gen(const std::filesystem::path& xml_path, const std::filesystem::path& gen
 		}
 		gen_base->Gen2();
 	}
+	gen_base->Delete();
 }

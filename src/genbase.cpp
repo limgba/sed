@@ -4,11 +4,11 @@
 #include <regex>
 
 GenBase::GenBase(const std::filesystem::path& gen_path)
-	: m_gen_path(gen_path)
+	: m_gen_path(gen_path), m_member_count(0)
 {
-	m_def_name = this->ToDefName(m_gen_path.stem());
-	m_file_name = this->ToFileName(m_gen_path.stem());
-	m_class_name = this->ToClassName(m_gen_path.stem());
+	m_def_name = this->ToDefName(m_gen_path.stem().string());
+	m_file_name = this->ToFileName(m_gen_path.stem().string());
+	m_class_name = this->ToClassName(m_gen_path.stem().string()) + "Config";
 }
 
 void GenBase::Replace()
@@ -91,10 +91,11 @@ std::string GenBase::CalcType(const std::string& in_str, bool& need_init)
 void GenBase::Gen0(const std::string& struct_name)
 {
 	const std::string hump_struct_name = this->ToClassName(struct_name);
-	m_sub_class_name = m_class_name + hump_struct_name;
+	m_sub_class_name = m_class_name + hump_struct_name + "Cfg";
 	m_member_name = struct_name;
 	m_key_vec.clear();
 	m_key_name_vec.clear();
+	m_member_count = 0;
 }
 void GenBase::Gen1(const std::string& member_name)
 {
@@ -109,6 +110,12 @@ void GenBase::Gen1(const std::string& member_name)
 		m_key_vec.push_back("std::map<int, ");
 		m_key_name_vec.push_back(member_name);
 	}
+	++m_member_count;
 }
 void GenBase::Gen2() {}
 
+void GenBase::Delete()
+{
+	lmb::sed(m_gen_path.string(), 'd', "%%getfunc_name%%", "");
+	lmb::sed(m_gen_path.string(), 'd', "%%initfunc_name%%", "");
+}

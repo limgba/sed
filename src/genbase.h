@@ -13,6 +13,7 @@ public:
 	virtual void Gen0(const std::string& struct_name);
 	virtual void Gen1(const std::string& member_name);
 	virtual void Gen2();
+	virtual void Delete();
 
 protected:
 	std::string ToDefName(const std::string& in_str);
@@ -26,6 +27,7 @@ protected:
 	std::string m_class_name;
 	std::string m_sub_class_name;
 	std::string m_member_name;
+	int m_member_count;
 	std::vector<std::string> m_key_vec;
 	std::vector<std::string> m_key_name_vec;
 };

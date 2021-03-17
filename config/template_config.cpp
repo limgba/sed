@@ -11,6 +11,7 @@ bool %%class_name%%::Init(const std::string& configname, std::string* err)
 
 //%%load_config%%
 
+	return true;
 }
 
 //%%getfunc_name%%

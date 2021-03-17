@@ -5,7 +5,7 @@
 #include <regex>
 #include <fstream>
 
-
+int g_is_compare_file_time = 1;
 void get_files_time(const std::string& path_name, const std::string regex_str, std::map<std::string, FileData>& file_time_map)
 {
 	namespace fs = std::filesystem;
@@ -43,7 +43,7 @@ void get_files_time(const std::string& path_name, const std::string regex_str, s
 		}
 		else
 		{
-			if (file_time < it->second.last_write_time)
+			if (g_is_compare_file_time && file_time < it->second.last_write_time)
 			{
 				it->second = file_data;
 			}
@@ -63,7 +63,7 @@ void compare_files_time(const std::string& xml_path_str, const std::string& cpp_
 		const auto& xml_name = xml_pair.first;
 		const auto& xml_file_data = xml_pair.second;
 		auto it = cpp_file_map.find(xml_name);
-		if (cpp_file_map.end() != it && xml_file_data.last_write_time <= it->second.last_write_time)
+		if (cpp_file_map.end() != it && g_is_compare_file_time && xml_file_data.last_write_time <= it->second.last_write_time)
 		{
 			continue;
 		}
@@ -73,9 +73,21 @@ void compare_files_time(const std::string& xml_path_str, const std::string& cpp_
 
 		std::string full_cpp_path = gen_path.string() + xml_name + ".cpp";
 		std::string full_head_path = gen_path.string() + xml_name + ".h";
+		std::string template_cpp = xml_path_str + "/" + "template_config.cpp";
+		if (!std::filesystem::exists(template_cpp))
+		{
+			printf("path[%s] not exists\n", template_cpp.c_str());
+			return;
+		}
+		std::string template_head = xml_path_str + "/" + "template_config.h";
+		if (!std::filesystem::exists(template_head))
+		{
+			printf("path[%s] not exists\n", template_head.c_str());
+			return;
+		}
 
-		std::filesystem::copy("./config/template_config.cpp", full_cpp_path, copyOptions);
-		std::filesystem::copy("./config/template_config.h", full_head_path, copyOptions);
+		std::filesystem::copy(template_cpp, full_cpp_path, copyOptions);
+		std::filesystem::copy(template_head, full_head_path, copyOptions);
 		gen(xml_file_data.full_file_name, full_cpp_path);
 		gen(xml_file_data.full_file_name, full_head_path);
 	}

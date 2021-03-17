@@ -4,6 +4,7 @@
 #include <string>
 #include <map>
 
+extern int g_is_compare_file_time;
 struct FileData
 {
 	std::string full_file_name;

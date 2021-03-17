@@ -6,21 +6,15 @@
 
 //%%struct_name%%
 
-namespace genconfig
-{
-
 class %%class_name%% : ConfigBase
 {
 public:
 	bool Init(const std::string& configname, std::string* err);
 //%%getfunc_name%%
-
 private:
 //%%initfunc_name%%
-
 private:
 //%%member_name%%
-
 };
 
 

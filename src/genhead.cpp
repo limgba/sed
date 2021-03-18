@@ -2,7 +2,7 @@
 #include "lmb_sed.h"
 
 GenHead::GenHead(const std::filesystem::path& gen_path)
-	: GenBase(gen_path)
+	: GenBase(gen_path), m_need_init_count(0)
 {
 }
 
@@ -40,6 +40,7 @@ void GenHead::Gen1(const std::string& member_name)
 		std::string insert_str = 
 		"\t\t" + member_name + "(0),%%init_struct_comma%%";
 		lmb::sed(m_gen_path.string(), 'O', "%%init_struct_member%%", insert_str);
+		++m_need_init_count;
 	}
 
 	{
@@ -51,7 +52,14 @@ void GenHead::Gen1(const std::string& member_name)
 void GenHead::Gen2()
 {
 	GenBase::Gen2();
-	lmb::sed(m_gen_path.string(), 's', "%%init_struct_head%%", "");
+	if (m_need_init_count == 0)
+	{
+		lmb::sed(m_gen_path.string(), 'd', "%%init_struct_head%%", "");
+	}
+	else
+	{
+		lmb::sed(m_gen_path.string(), 's', "%%init_struct_head%%", "");
+	}
 	lmb::sed(m_gen_path.string(), 'd', "%%init_struct_member%%", "");
 	lmb::sed(m_gen_path.string(), 's', ",%%init_struct_comma%%", "");
 	lmb::sed(m_gen_path.string(), 'd', "%%struct_member%%", "");
@@ -62,7 +70,7 @@ void GenHead::Gen2()
 		{
 			member_name += key;
 		}
-		member_name = member_name + m_sub_class_name + std::string(m_key_vec.size(), '>') + m_member_name + ";";
+		member_name = member_name + m_sub_class_name + std::string(m_key_vec.size(), '>') + " " + m_member_name + ";";
 		lmb::sed(m_gen_path.string(), 'O', "%%member_name%%", member_name);
 	}
 

@@ -11,6 +11,8 @@ public:
 	virtual void Gen1(const std::string& member_name) override;
 	virtual void Gen2() override;
 	virtual void Delete() override;
+private:
+	int m_need_init_count;
 };
 
 #endif

@@ -35,13 +35,18 @@ void GenCpp::Gen0(const std::string& struct_name)
 		"\tPugiXmlNode dataElement = RootElement.child(\"data\");\n" + 
 		"\twhile (!dataElement.empty())\n" + 
 		"\t{\n" + 
-		"\t\t" + m_sub_class_name + " cfg;\n" +
 		"//%%initfunc_content%%\n" +
 		"\t}\n" +
 		"%%initfunc_end%%\n" +
 		"\treturn 0;\n" +
 		"}";
 		lmb::sed(m_gen_path.string(), 'O', "%%initfunc_name%%", insert_str);
+	}
+	if (!m_key_name_vec.empty())
+	{
+		std::string insert_str = 
+		"\t\t" + m_sub_class_name + " cfg;";
+		lmb::sed(m_gen_path.string(), 'O', "%%initfunc_content%%", insert_str);
 	}
 
 }
@@ -106,6 +111,7 @@ void GenCpp::Gen2()
 {
 	GenBase::Gen2();
 	std::smatch sm;
+	if (!m_key_name_vec.empty())
 	{
 		std::string insert_str = 
 		"\t\tauto& container_0 = tmp_container;";
@@ -232,21 +238,16 @@ void GenCpp::Gen2()
 			lmb::sed(m_gen_path.string(), 'O', "%%getfunc_content%%", insert_str);
 		}
 		lmb::sed(m_gen_path.string(), 's', "%%getfunc_pointer%%", "&");
-		{
-			std::string insert_str = 
-			"\t\t" + m_member_name + " = cfg;\n" +
-			"\t\tbreak;\n";
-			lmb::sed(m_gen_path.string(), 'O', "%%initfunc_content%%", insert_str);
-		}
 	}
 	else
 	{
 		lmb::sed(m_gen_path.string(), 's', "%%getfunc_pointer%%", "*");
-		{
-			std::string insert_str = 
-			"\t" + m_member_name+ " = tmp_container;";
-			lmb::sed(m_gen_path.string(), 'O', "%%initfunc_end%%", insert_str);
-		}
+	}
+
+	{
+		std::string insert_str = 
+		"\t" + m_member_name+ " = tmp_container;";
+		lmb::sed(m_gen_path.string(), 'O', "%%initfunc_end%%", insert_str);
 	}
 	lmb::sed(m_gen_path.string(), 'd', "%%getfunc_content%%", "");
 	lmb::sed(m_gen_path.string(), 'd', "%%initfunc_content%%", "");

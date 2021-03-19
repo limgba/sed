@@ -191,7 +191,7 @@ void GenCpp::Gen2()
 					"\t{\n"
 					"\t\tif (" + key_name_str + " >= container_" + i_str + "_it->second." + key_name_str + ")\n"
 					"\t\t{\n"
-					"\t\t\tcontainer_" + count_str + "_ptr = &(*container_" + i_str + "_it->second);\n"
+					"\t\t\tcontainer_" + count_str + "_ptr = &(container_" + i_str + "_it->second);\n"
 					"\t\t\tbreak;\n"
 					"\t\t}\n"
 					"\t}\n"

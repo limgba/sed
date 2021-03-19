@@ -9,9 +9,10 @@ GenHead::GenHead(const std::filesystem::path& gen_path)
 void GenHead::Gen0(const std::string& struct_name)
 {
 	GenBase::Gen0(struct_name);
+	m_need_init_count = 0;
 	{
 		std::string insert_str = 
-		"class " + m_sub_class_name + "\n" + 
+		"struct " + m_sub_class_name + "\n" + 
 		"{\n" + 
 		"\t" + m_sub_class_name + "()\n" + 
 		"\t\t:%%init_struct_head%%\n" + 
@@ -65,12 +66,7 @@ void GenHead::Gen2()
 	lmb::sed(m_gen_path.string(), 'd', "%%struct_member%%", "");
 
 	{
-		std::string member_name = "\t";
-		for (const auto& key : m_key_vec)
-		{
-			member_name += key;
-		}
-		member_name = member_name + m_sub_class_name + std::string(m_key_vec.size(), '>') + " " + m_member_name + ";";
+		std::string member_name = "\t" + this->CalcDynamicType(0) + " " + m_member_name + ";";
 		lmb::sed(m_gen_path.string(), 'O', "%%member_name%%", member_name);
 	}
 

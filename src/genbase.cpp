@@ -60,7 +60,7 @@ std::string GenBase::CalcType(const std::string& in_str, bool& need_init)
 		need_init = true;
 		out_str = "Attribute";
 	}
-	else if (std::regex_search(in_str, sm, std::regex("reward")))
+	else if (std::regex_search(in_str, sm, std::regex("reward_*item")))
 	{
 		need_init = false;
 		out_str = "std::vector<ItemConfigData>";
@@ -88,6 +88,17 @@ std::string GenBase::CalcType(const std::string& in_str, bool& need_init)
 	return out_str;
 }
 
+std::string GenBase::CalcDynamicType(size_t index)
+{
+	std::string ret_str;
+	for (size_t i = index; i < m_key_vec.size(); ++i)
+	{
+		ret_str += m_key_vec[i];
+	}
+	ret_str = ret_str + m_sub_class_name + std::string(m_key_vec.size() - index, '>');
+	return ret_str;
+}
+
 void GenBase::Gen0(const std::string& struct_name)
 {
 	const std::string hump_struct_name = this->ToClassName(struct_name);
@@ -100,12 +111,12 @@ void GenBase::Gen0(const std::string& struct_name)
 void GenBase::Gen1(const std::string& member_name)
 {
 	std::smatch sm;
-	if (std::regex_search(member_name, sm, std::regex("index|range")))
+	if (std::regex_search(member_name, sm, std::regex("index")))
 	{
 		m_key_vec.push_back("std::vector<");
 		m_key_name_vec.push_back(member_name);
 	}
-	else if (std::regex_search(member_name, sm, std::regex("key")))
+	else if (std::regex_search(member_name, sm, std::regex("key|range")))
 	{
 		m_key_vec.push_back("std::map<int, ");
 		m_key_name_vec.push_back(member_name);

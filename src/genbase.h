@@ -20,6 +20,7 @@ protected:
 	std::string ToFileName(const std::string& in_str);
 	std::string ToClassName(const std::string& in_str);
 	std::string CalcType(const std::string& in_str, bool& need_init);
+	std::string CalcDynamicType(size_t index);
 protected:
 	std::filesystem::path m_gen_path;
 	std::string m_def_name;

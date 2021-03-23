@@ -70,6 +70,11 @@ std::string GenBase::CalcType(const std::string& in_str, bool& need_init)
 		need_init = false;
 		out_str = "std::vector<UInt16>";
 	}
+	else if (std::regex_search(in_str, sm, std::regex("area")))
+	{
+		need_init = false;
+		out_str = "PointConfig";
+	}
 	else if (std::regex_search(in_str, sm, std::regex("item_*id|stuff_*id|equip_*id")))
 	{
 		need_init = true;
@@ -128,5 +133,6 @@ void GenBase::Gen2() {}
 void GenBase::Delete()
 {
 	lmb::sed(m_gen_path.string(), 'd', "%%getfunc_name%%", "");
+	lmb::sed(m_gen_path.string(), 'd', "%%getfunc_container%%", "");
 	lmb::sed(m_gen_path.string(), 'd', "%%initfunc_name%%", "");
 }

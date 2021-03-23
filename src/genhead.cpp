@@ -70,6 +70,12 @@ void GenHead::Gen2()
 		lmb::sed(m_gen_path.string(), 'O', "%%member_name%%", member_name);
 	}
 
+	if (m_key_vec.size() > 0)
+	{
+		std::string insert_str = "\tconst " + this->CalcDynamicType(0) + "& Get" + m_sub_class_name + "Container();";
+		lmb::sed(m_gen_path.string(), 'O', "%%getfunc_container%%", insert_str);
+	}
+
 	{
 		std::string insert_str = 
 		"\tconst " + m_sub_class_name + "%%getfunc_pointer%% Get" + m_sub_class_name + "(";

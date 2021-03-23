@@ -82,6 +82,18 @@ void GenCpp::Gen1(const std::string& member_name)
 			lmb::sed(m_gen_path.string(), 'O', "%%initfunc_content%%", insert_str);
 		}
 	}
+	else if (std::regex_search(member_name, sm, std::regex("area")))
+	{
+		{
+			std::string insert_str = 
+			"\t\tbool " + member_name + "_ret = cfg." + member_name + ".ReadConfig(dataElement, \"" + member_name + "\");\n" +
+			"\t\tif (!" + member_name + "_ret)\n" + 
+			"\t\t{\n" +
+			"\t\t\treturn -" + member_count_str + "000;\n" + 
+			"\t\t}\n";
+			lmb::sed(m_gen_path.string(), 'O', "%%initfunc_content%%", insert_str);
+		}
+	}
 	else if (std::regex_search(member_name, sm, std::regex("item_*id|stuff_*id|equip_*id")))
 	{
 		{
@@ -189,7 +201,7 @@ void GenCpp::Gen2()
 					"\t" + this->CalcDynamicType(i + 1) + "* container_" + count_str + "_ptr = nullptr;\n" + 
 					"\tfor (auto container_" + i_str + "_it = container_" + i_str + ".rbegin(); container_" + i_str + "_it != container_" + i_str + ".rend(); ++container_" + i_str + "_it)\n"
 					"\t{\n"
-					"\t\tif (" + key_name_str + " >= container_" + i_str + "_it->second." + key_name_str + ")\n"
+					"\t\tif (" + key_name_str + " >= container_" + i_str + "_it->first)\n"
 					"\t\t{\n"
 					"\t\t\tcontainer_" + count_str + "_ptr = &(container_" + i_str + "_it->second);\n"
 					"\t\t\tbreak;\n"
@@ -266,6 +278,16 @@ void GenCpp::Gen2()
 		std::string insert_str = 
 		"\t" + m_member_name+ " = tmp_container;";
 		lmb::sed(m_gen_path.string(), 'O', "%%initfunc_end%%", insert_str);
+	}
+
+	if (m_key_vec.size() > 0)
+	{
+		std::string insert_str = 
+		"const " + this->CalcDynamicType(0) + "& " + m_class_name + "::Get" + m_sub_class_name + "Container()\n" + 
+		"{\n" + 
+		"\treturn " + m_member_name + ";\n" + 
+		"}\n";
+		lmb::sed(m_gen_path.string(), 'O', "%%getfunc_content%%", insert_str);
 	}
 	lmb::sed(m_gen_path.string(), 'd', "%%initfunc_def_cfg%%", "");
 	lmb::sed(m_gen_path.string(), 'd', "%%getfunc_content%%", "");

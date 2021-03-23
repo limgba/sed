@@ -287,8 +287,9 @@ void GenCpp::Gen2()
 		"{\n" + 
 		"\treturn " + m_member_name + ";\n" + 
 		"}\n";
-		lmb::sed(m_gen_path.string(), 'O', "%%getfunc_content%%", insert_str);
+		lmb::sed(m_gen_path.string(), 'O', "%%getfunc_container%%", insert_str);
 	}
+
 	lmb::sed(m_gen_path.string(), 'd', "%%initfunc_def_cfg%%", "");
 	lmb::sed(m_gen_path.string(), 'd', "%%getfunc_content%%", "");
 	lmb::sed(m_gen_path.string(), 'd', "%%initfunc_content%%", "");

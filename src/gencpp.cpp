@@ -194,7 +194,7 @@ void GenCpp::Gen2()
 				"\tauto& container_" + count_str + " = map_it_" + i_str + "->second;\n";
 				lmb::sed(m_gen_path.string(), 'O', "%%getfunc_content%%", insert_str);
 			}
-			else if (std::regex_search(key_name_str, sm, std::regex("range")))
+			else if (std::regex_search(key_name_str, sm, std::regex("_range")))
 			{
 				{
 					std::string insert_str = 
@@ -202,6 +202,27 @@ void GenCpp::Gen2()
 					"\tfor (auto container_" + i_str + "_it = container_" + i_str + ".rbegin(); container_" + i_str + "_it != container_" + i_str + ".rend(); ++container_" + i_str + "_it)\n"
 					"\t{\n"
 					"\t\tif (" + key_name_str + " >= container_" + i_str + "_it->first)\n"
+					"\t\t{\n"
+					"\t\t\tcontainer_" + count_str + "_ptr = &(container_" + i_str + "_it->second);\n"
+					"\t\t\tbreak;\n"
+					"\t\t}\n"
+					"\t}\n"
+					"\tif (nullptr == container_" + count_str + "_ptr)\n"
+					"\t{\n"
+					"\t\treturn nullptr;\n"
+					"\t}\n"
+					"\tauto& container_" + count_str + " = *container_" + count_str + "_ptr;\n";
+					lmb::sed(m_gen_path.string(), 'O', "%%getfunc_content%%", insert_str);
+				}
+			}
+			else if (std::regex_search(key_name_str, sm, std::regex("_rrange")))
+			{
+				{
+					std::string insert_str = 
+					"\t" + this->CalcDynamicType(i + 1) + "* container_" + count_str + "_ptr = nullptr;\n" + 
+					"\tfor (auto container_" + i_str + "_it = container_" + i_str + ".begin(); container_" + i_str + "_it != container_" + i_str + ".end(); ++container_" + i_str + "_it)\n"
+					"\t{\n"
+					"\t\tif (" + key_name_str + " <= container_" + i_str + "_it->first)\n"
 					"\t\t{\n"
 					"\t\t\tcontainer_" + count_str + "_ptr = &(container_" + i_str + "_it->second);\n"
 					"\t\t\tbreak;\n"

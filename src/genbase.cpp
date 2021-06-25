@@ -121,7 +121,7 @@ void GenBase::Gen1(const std::string& member_name)
 		m_key_vec.push_back("std::vector<");
 		m_key_name_vec.push_back(member_name);
 	}
-	else if (std::regex_search(member_name, sm, std::regex("key|range")))
+	else if (std::regex_search(member_name, sm, std::regex("key|_range|_rrange")))
 	{
 		m_key_vec.push_back("std::map<int, ");
 		m_key_name_vec.push_back(member_name);

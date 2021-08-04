@@ -51,43 +51,54 @@ std::string GenBase::ToClassName(const std::string& in_str)
 	return out_str;
 }
 
-std::string GenBase::CalcType(const std::string& in_str, bool& need_init)
+std::string GenBase::CalcType(const std::string& in_str, CalcTypeRet& ret)
 {
 	std::smatch sm;
 	std::string out_str;
-	if (std::regex_search(in_str, sm, std::regex("attr|hp|gongji|fangyu")))
+	ret.variable_name = in_str;
+
+	if (std::regex_search(in_str, sm, std::regex("hp|gongji|fangyu")))
 	{
-		need_init = true;
 		out_str = "Attribute";
 	}
 	else if (std::regex_search(in_str, sm, std::regex("reward_*item")))
 	{
-		need_init = false;
+		ret.need_init = false;
 		out_str = "std::vector<ItemConfigData>";
 	}
 	else if (std::regex_search(in_str, sm, std::regex("drop")))
 	{
-		need_init = false;
+		ret.need_init = false;
 		out_str = "std::vector<UInt16>";
 	}
 	else if (std::regex_search(in_str, sm, std::regex("area")))
 	{
-		need_init = false;
+		ret.need_init = false;
 		out_str = "PointConfig";
 	}
 	else if (std::regex_search(in_str, sm, std::regex("item_*id|stuff_*id|equip_*id")))
 	{
-		need_init = true;
 		out_str = "ItemID";
 	}
 	else if (std::regex_search(in_str, sm, std::regex("capability|money")))
 	{
-		need_init = true;
 		out_str = "long long";
+	}
+	else if (std::regex_search(in_str, sm, std::regex("attr_type_\\d|attr_value_\\d")))
+	{
+		ret.need_init = false;
+		if (sm.size() == 0 || sm[0] != "attr_type_0")
+		{
+			ret.need_declare = false;
+		}
+		else
+		{
+			ret.variable_name = "attr_map";
+		}
+		out_str = "std::map<int, Attribute>";
 	}
 	else
 	{
-		need_init = true;
 		out_str = "int";
 	}
 	return out_str;
@@ -135,4 +146,5 @@ void GenBase::Delete()
 	lmb::sed(m_gen_path.string(), 'd', "%%getfunc_name%%", "");
 	lmb::sed(m_gen_path.string(), 'd', "%%getfunc_container%%", "");
 	lmb::sed(m_gen_path.string(), 'd', "%%initfunc_name%%", "");
+	lmb::sed(m_gen_path.string(), 'd', "%%cross_instance%%", "");
 }

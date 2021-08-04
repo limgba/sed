@@ -11,6 +11,7 @@ class %%class_name%% : public ConfigBase
 public:
 	%%class_name%%() = default;
 	~%%class_name%%() = default;
+	//%%cross_instance%%
 	bool Init(const std::string& configname, std::string* err);
 //%%getfunc_name%%
 

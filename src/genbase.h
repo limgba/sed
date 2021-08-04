@@ -5,6 +5,13 @@
 #include <vector>
 #include <filesystem>
 
+struct CalcTypeRet
+{
+	bool need_init = true;
+	bool need_declare = true;
+	std::string variable_name;
+};
+
 class GenBase
 {
 public:
@@ -19,7 +26,7 @@ protected:
 	std::string ToDefName(const std::string& in_str);
 	std::string ToFileName(const std::string& in_str);
 	std::string ToClassName(const std::string& in_str);
-	std::string CalcType(const std::string& in_str, bool& need_init);
+	std::string CalcType(const std::string& in_str, CalcTypeRet& ret);
 	std::string CalcDynamicType(size_t index);
 protected:
 	std::filesystem::path m_gen_path;

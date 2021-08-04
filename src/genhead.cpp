@@ -29,13 +29,20 @@ void GenHead::Gen0(const std::string& struct_name)
 		lmb::sed(m_gen_path.string(), 'O', "%%initfunc_name%%", insert_str);
 	}
 
+	if (m_file_name.find("cross") != std::string::npos)
+	{
+		std::string insert_str = 
+		"\tstatic " + m_class_name + "& Instance();";
+		lmb::sed(m_gen_path.string(), 'O', "%%cross_instance%%", insert_str);
+	}
+
 }
 void GenHead::Gen1(const std::string& member_name)
 {
 	GenBase::Gen1(member_name);
-	bool need_init = false;
-	std::string member_type = this->CalcType(member_name, need_init);
-	if (need_init)
+	CalcTypeRet ret;
+	std::string member_type = this->CalcType(member_name, ret);
+	if (ret.need_init)
 	{
 		lmb::sed(m_gen_path.string(), 's', "%%init_struct_comma%%", "");
 		std::string insert_str = 
@@ -44,9 +51,19 @@ void GenHead::Gen1(const std::string& member_name)
 		++m_need_init_count;
 	}
 
+	if (ret.need_declare)
 	{
-		std::string insert_str = 
-		"\t" + member_type + " " + member_name + ";";
+		std::string insert_str;
+		if (ret.variable_name.empty())
+		{
+			insert_str = 
+			"\t" + member_type + " " + member_name + ";";
+		}
+		else
+		{
+			insert_str = 
+			"\t" + member_type + " " + ret.variable_name + ";";
+		}
 		lmb::sed(m_gen_path.string(), 'O', "%%struct_member%%", insert_str);
 	}
 }

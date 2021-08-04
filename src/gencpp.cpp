@@ -44,6 +44,17 @@ void GenCpp::Gen0(const std::string& struct_name)
 		lmb::sed(m_gen_path.string(), 'O', "%%initfunc_name%%", insert_str);
 	}
 
+
+	if (m_file_name.find("cross") != std::string::npos)
+	{
+		std::string insert_str = 
+		m_class_name + "& Instance()\n" +
+		"{\n" +
+		"\tstatic " + m_class_name + "instance;\n" +
+		"\treturn instance;" +
+		"}\n";
+		lmb::sed(m_gen_path.string(), 'O', "%%cross_instance%%", insert_str);
+	}
 }
 
 void GenCpp::Gen1(const std::string& member_name)
@@ -61,8 +72,21 @@ void GenCpp::Gen1(const std::string& member_name)
 			{
 				read_str = read_str.substr(0, read_str.size() - 5);
 			}
-			std::string insert_str = 
-			"\t\tint " + member_name + "_ret = ItemConfigData::ReadConfigList(dataElement, \"" + read_str + "\", cfg." + member_name + ");\n" + 
+			std::string insert_str;
+			if (m_file_name.find("cross") != std::string::npos)
+			{
+				insert_str += "\t\tint " + member_name + "_ret = ItemConfigData::ReadConfigListNoCheck(dataElement, \"" + read_str + "\", cfg." + member_name + ");\n";
+			}
+			else
+			{
+				insert_str += "\t\tint " + member_name + "_ret = ItemConfigData::ReadConfigList(dataElement, \"" + read_str + "\", cfg." + member_name + ");\n";
+				{
+					std::string insert_str = 
+					"#include \"item/itempool.h\"";
+					lmb::sed(m_gen_path.string(), 's', "%%include itempool%%", insert_str);
+				}
+			}
+			insert_str = insert_str + 
 			"\t\tif (" + member_name + "_ret < 0)\n" + 
 			"\t\t{\n" + 
 			"\t\t\treturn -" + member_count_str + "000 + " + member_name + "_ret;\n" + 
@@ -81,6 +105,12 @@ void GenCpp::Gen1(const std::string& member_name)
 			"\t\t}\n";
 			lmb::sed(m_gen_path.string(), 'O', "%%initfunc_content%%", insert_str);
 		}
+
+		{
+			std::string insert_str = 
+			"#include \"monster/drop/droppool.hpp\"";
+			lmb::sed(m_gen_path.string(), 's', "%%include droppool%%", insert_str);
+		}
 	}
 	else if (std::regex_search(member_name, sm, std::regex("area")))
 	{
@@ -97,12 +127,44 @@ void GenCpp::Gen1(const std::string& member_name)
 	else if (std::regex_search(member_name, sm, std::regex("item_*id|stuff_*id|equip_*id")))
 	{
 		{
-			std::string insert_str = 
-			"\t\tif (!PugiGetSubNodeValue(dataElement, \"" + member_name + "\", cfg." + member_name + ") || nullptr == ITEMPOOL->GetItem(cfg." + member_name + "))\n" + 
-			"\t\t{\n" + 
+			std::string insert_str;
+			if (m_file_name.find("cross") == std::string::npos)
+			{
+				insert_str = insert_str + "\t\tif (!PugiGetSubNodeValue(dataElement, \"" + member_name + "\", cfg." + member_name + ") || nullptr == ITEMPOOL->GetItem(cfg." + member_name + "))\n";
+				{
+					std::string insert_str = 
+					"#include \"item/itempool.h\"";
+					lmb::sed(m_gen_path.string(), 's', "%%include itempool%%", insert_str);
+				}
+			}
+			else
+			{
+				insert_str = insert_str + "\t\tif (!PugiGetSubNodeValue(dataElement, \"" + member_name + "\", cfg." + member_name + "))\n";
+			}
+		
+			insert_str = insert_str + "\t\t{\n" + 
 			"\t\t\treturn -" + member_count_str + ";\n" + 
 			"\t\t}\n";
 			lmb::sed(m_gen_path.string(), 'O', "%%initfunc_content%%", insert_str);
+		}
+
+	}
+	else if (member_name == "attr_type_0")
+	{
+		{
+			std::string insert_str =
+			"\t\tReadAttrTypeValueConfig config_tool;\n";
+			insert_str = insert_str + "\t\tint " + member_name + "_ret = config_tool.Read(dataElement, \"attr\", cfg.attr_map)\n" + 
+			"\t\t{\n" + 
+			"\t\t\treturn -" + member_count_str + "000 + " + member_name + "_ret;\n" + 
+			"\t\t}\n";
+			lmb::sed(m_gen_path.string(), 'O', "%%initfunc_content%%", insert_str);
+		}
+
+		{
+			std::string insert_str = 
+			"#include \"obj/character/attribute.hpp\"";
+			lmb::sed(m_gen_path.string(), 's', "%%include attribute%%", insert_str);
 		}
 	}
 	else
@@ -316,6 +378,9 @@ void GenCpp::Gen2()
 	lmb::sed(m_gen_path.string(), 'd', "%%initfunc_content%%", "");
 	lmb::sed(m_gen_path.string(), 'd', "%%initfunc_end%%", "");
 	lmb::sed(m_gen_path.string(), 's', "%%getfunc_args%%", "");
+	lmb::sed(m_gen_path.string(), 'd', "%%include itempool%%", "");
+	lmb::sed(m_gen_path.string(), 'd', "%%include attribute%%", "");
+	lmb::sed(m_gen_path.string(), 'd', "%%include droppool%%", "");
 }
 
 void GenCpp::Delete()

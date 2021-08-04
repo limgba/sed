@@ -1,9 +1,11 @@
 #include "servercommon/servercommon.h"
 #include "servercommon/configcommon.h"
-#include "item/itempool.h"
-#include "obj/character/attribute.hpp"
-#include "gameworld/checkresourcecenter.hpp"
+%%include itempool%%
+%%include attribute%%
+%%include droppool%%
 #include "%%file_name%%.h"
+
+//%%cross_instance%%
 
 bool %%class_name%%::Init(const std::string& configname, std::string* err)
 {

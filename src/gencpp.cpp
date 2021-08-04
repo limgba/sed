@@ -155,8 +155,8 @@ void GenCpp::Gen1(const std::string& member_name)
 		{
 			std::string insert_str =
 			"\t\tReadAttrTypeValueConfig config_tool;\n";
-			insert_str = insert_str + "\t\tint " + member_name + "_ret = config_tool.Read(dataElement, \"attr\", cfg.attr_map)\n" + 
-			"if (" + member_name + "_ret < 0)\n" +
+			insert_str = insert_str + "\t\tint " + member_name + "_ret = config_tool.Read(dataElement, \"attr\", cfg.attr_map);\n" + 
+			"\tif (" + member_name + "_ret < 0)\n" +
 			"\t\t{\n" + 
 			"\t\t\treturn -" + member_count_str + "000 + " + member_name + "_ret;\n" + 
 			"\t\t}\n";

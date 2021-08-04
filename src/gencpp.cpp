@@ -149,23 +149,26 @@ void GenCpp::Gen1(const std::string& member_name)
 		}
 
 	}
-	else if (member_name == "attr_type_0")
+	else if (std::regex_search(member_name, sm, std::regex("attr_type_\\d|attr_value_\\d")))
 	{
+		if (member_name == "attr_type_0")
 		{
 			std::string insert_str =
 			"\t\tReadAttrTypeValueConfig config_tool;\n";
 			insert_str = insert_str + "\t\tint " + member_name + "_ret = config_tool.Read(dataElement, \"attr\", cfg.attr_map)\n" + 
+			"if (" + member_name + "_ret < 0)\n" +
 			"\t\t{\n" + 
 			"\t\t\treturn -" + member_count_str + "000 + " + member_name + "_ret;\n" + 
 			"\t\t}\n";
 			lmb::sed(m_gen_path.string(), 'O', "%%initfunc_content%%", insert_str);
+
+			{
+				std::string insert_str = 
+				"#include \"obj/character/attribute.hpp\"";
+				lmb::sed(m_gen_path.string(), 's', "%%include attribute%%", insert_str);
+			}
 		}
 
-		{
-			std::string insert_str = 
-			"#include \"obj/character/attribute.hpp\"";
-			lmb::sed(m_gen_path.string(), 's', "%%include attribute%%", insert_str);
-		}
 	}
 	else
 	{

@@ -10,6 +10,8 @@ GenCpp::GenCpp(const std::filesystem::path& gen_path)
 
 void GenCpp::Replace()
 {
+	GenBase::Replace();
+
 	if (m_file_name.find("cross") != std::string::npos)
 	{
 		std::string insert_str = 

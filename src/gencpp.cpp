@@ -8,6 +8,20 @@ GenCpp::GenCpp(const std::filesystem::path& gen_path)
 {
 }
 
+void GenCpp::Replace()
+{
+	if (m_file_name.find("cross") != std::string::npos)
+	{
+		std::string insert_str = 
+		m_class_name + "& " + m_class_name + "::Instance()\n" +
+		"{\n" +
+		"\tstatic " + m_class_name + "instance;\n" +
+		"\treturn instance;\n" +
+		"}\n";
+		lmb::sed(m_gen_path.string(), 'O', "%%cross_instance%%", insert_str);
+	}
+}
+
 void GenCpp::Gen0(const std::string& struct_name)
 {
 	GenBase::Gen0(struct_name);
@@ -42,18 +56,6 @@ void GenCpp::Gen0(const std::string& struct_name)
 		"\treturn 0;\n" +
 		"}";
 		lmb::sed(m_gen_path.string(), 'O', "%%initfunc_name%%", insert_str);
-	}
-
-
-	if (m_file_name.find("cross") != std::string::npos)
-	{
-		std::string insert_str = 
-		m_class_name + "& Instance()\n" +
-		"{\n" +
-		"\tstatic " + m_class_name + "instance;\n" +
-		"\treturn instance;" +
-		"}\n";
-		lmb::sed(m_gen_path.string(), 'O', "%%cross_instance%%", insert_str);
 	}
 }
 
@@ -381,13 +383,13 @@ void GenCpp::Gen2()
 	lmb::sed(m_gen_path.string(), 'd', "%%initfunc_content%%", "");
 	lmb::sed(m_gen_path.string(), 'd', "%%initfunc_end%%", "");
 	lmb::sed(m_gen_path.string(), 's', "%%getfunc_args%%", "");
-	lmb::sed(m_gen_path.string(), 'd', "%%include itempool%%", "");
-	lmb::sed(m_gen_path.string(), 'd', "%%include attribute%%", "");
-	lmb::sed(m_gen_path.string(), 'd', "%%include droppool%%", "");
 }
 
 void GenCpp::Delete()
 {
 	GenBase::Delete();
 	lmb::sed(m_gen_path.string(), 'd', "%%load_config%%", "");
+	lmb::sed(m_gen_path.string(), 'd', "%%include itempool%%", "");
+	lmb::sed(m_gen_path.string(), 'd', "%%include attribute%%", "");
+	lmb::sed(m_gen_path.string(), 'd', "%%include droppool%%", "");
 }

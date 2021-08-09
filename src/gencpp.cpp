@@ -19,7 +19,7 @@ void GenCpp::Replace()
 		"{\n" +
 		"\tstatic " + m_class_name + "instance;\n" +
 		"\treturn instance;\n" +
-		"}\n";
+		"}";
 		lmb::sed(m_gen_path.string(), 'O', "%%cross_instance%%", insert_str);
 	}
 }

@@ -8,7 +8,7 @@ GenBase::GenBase(const std::filesystem::path& gen_path)
 {
 	m_def_name = this->ToDefName(m_gen_path.stem().string());
 	m_file_name = this->ToFileName(m_gen_path.stem().string());
-	m_class_name = this->ToClassName(m_gen_path.stem().string()) + "Config";
+	m_class_name = this->ToClassName(m_gen_path.stem().string());
 }
 
 void GenBase::Replace()

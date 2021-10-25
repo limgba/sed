@@ -1,5 +1,5 @@
-#ifndef __%%def_name%%_CONFIG_H__
-#define __%%def_name%%_CONFIG_H__
+#ifndef __%%def_name%%_H__
+#define __%%def_name%%_H__
 
 #include "servercommon/configbase.h"
 #include "servercommon/pugixml/pugixml_adapter.hpp"

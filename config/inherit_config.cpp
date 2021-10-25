@@ -1,7 +1,8 @@
 #include "%%file_name%%.h"
 
 
-bool %%class_name%%::OnInitFinish()
+int %%class_name%%::CheckData()
 {
+	return 0;
 }
 

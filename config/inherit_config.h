@@ -10,8 +10,8 @@ public:
 	%%class_name%%() = default;
 	virtual ~%%class_name%%() = default;
 
-	virtual bool OnInitFinish() override;
 private:
+	virtual int CheckData() override;
 
 };
 

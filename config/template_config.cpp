@@ -13,13 +13,19 @@ bool %%class_name%%::Init(const std::string& configname, std::string* err)
 
 //%%load_config%%
 
-	bool init_finish_ret = this->OnInitFinish();
-	return init_finish_ret;
+	int check_data_ret = this->CheckData();
+	if (check_data_ret)
+	{
+		sprintf(errinfo, "%s: %%class_name%%::CheckData failed %d", configname.c_str(), check_data_ret);
+		*err += errinfo;
+		return false;
+	}
+	return true;
 }
 
-bool %%class_name%%::OnInitFinish()
+int %%class_name%%::CheckData()
 {
-
+	return 0;
 }
 
 //%%getfunc_name%%

@@ -9,6 +9,10 @@ GenBase::GenBase(const std::filesystem::path& gen_path)
 	m_def_name = this->ToDefName(m_gen_path.stem().string());
 	m_file_name = this->ToFileName(m_gen_path.stem().string());
 	m_class_name = this->ToClassName(m_gen_path.stem().string());
+	if (m_file_name.find("_impl") != std::string::npos)
+	{
+		m_base_file_name = m_file_name.substr(0, m_file_name.size() - 5);
+	}
 	if (m_class_name.find("Impl") != std::string::npos)
 	{
 		m_base_class_name = m_class_name.substr(0, m_class_name.size() - 4);
@@ -21,6 +25,7 @@ void GenBase::Replace()
 	lmb::sed(m_gen_path.string(), 's', "%%class_name%%", m_class_name);
 	lmb::sed(m_gen_path.string(), 's', "%%file_name%%", m_file_name);
 	lmb::sed(m_gen_path.string(), 's', "%%base_class_name%%", m_base_class_name);
+	lmb::sed(m_gen_path.string(), 's', "%%base_file_name%%", m_base_file_name);
 }
 
 

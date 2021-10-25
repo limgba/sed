@@ -1,7 +1,7 @@
 #ifndef __%%def_name%%_H__
 #define __%%def_name%%_H__
 
-#include "%%file_name%%.h"
+#include "%%base_file_name%%.h"
 
 
 class %%class_name%% : virtual public %%base_class_name%%

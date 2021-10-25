@@ -16,7 +16,7 @@ bool %%class_name%%::Init(const std::string& configname, std::string* err)
 	int check_data_ret = this->CheckData();
 	if (check_data_ret)
 	{
-		sprintf(errinfo, "%s: %%class_name%%::CheckData failed %d", configname.c_str(), check_data_ret);
+		sprintf(errinfo, "%s: %%class_name%%Impl::CheckData failed %d", configname.c_str(), check_data_ret);
 		*err += errinfo;
 		return false;
 	}

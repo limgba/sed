@@ -13,12 +13,12 @@ public:
 	virtual ~%%class_name%%() = default;
 	//%%cross_instance%%
 	bool Init(const std::string& configname, std::string* err);
-private:
-	virtual int CheckData();
+
 //%%getfunc_name%%
 
 //%%getfunc_container%%
 private:
+	virtual int CheckData();
 //%%initfunc_name%%
 
 protected:

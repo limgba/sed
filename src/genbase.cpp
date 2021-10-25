@@ -9,6 +9,10 @@ GenBase::GenBase(const std::filesystem::path& gen_path)
 	m_def_name = this->ToDefName(m_gen_path.stem().string());
 	m_file_name = this->ToFileName(m_gen_path.stem().string());
 	m_class_name = this->ToClassName(m_gen_path.stem().string());
+	if (m_class_name.find("Impl") != std::string::npos)
+	{
+		m_base_class_name = m_class_name.substr(0, m_class_name.size() - 4);
+	}
 }
 
 void GenBase::Replace()
@@ -16,6 +20,7 @@ void GenBase::Replace()
 	lmb::sed(m_gen_path.string(), 's', "%%def_name%%", m_def_name);
 	lmb::sed(m_gen_path.string(), 's', "%%class_name%%", m_class_name);
 	lmb::sed(m_gen_path.string(), 's', "%%file_name%%", m_file_name);
+	lmb::sed(m_gen_path.string(), 's', "%%base_class_name%%", m_base_class_name);
 }
 
 
@@ -114,8 +119,8 @@ std::string GenBase::CalcDynamicType(size_t index)
 void GenBase::Gen0(const std::string& struct_name)
 {
 	const std::string hump_struct_name = this->ToClassName(struct_name);
-	m_sub_class_name = m_class_name + hump_struct_name + "Cfg";
-	m_member_name = "m_" + this->ToFileName(struct_name) + "_cfg_container";
+	m_sub_class_name = m_class_name + hump_struct_name;
+	m_member_name = "m_" + this->ToFileName(struct_name) + "_container";
 	m_key_vec.clear();
 	m_key_name_vec.clear();
 	m_member_count = 0;

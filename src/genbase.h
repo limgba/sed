@@ -33,6 +33,7 @@ protected:
 	std::string m_def_name;
 	std::string m_file_name;
 	std::string m_class_name;
+	std::string m_base_class_name;
 	std::string m_sub_class_name;
 	std::string m_member_name;
 	int m_member_count;

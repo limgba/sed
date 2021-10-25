@@ -13,7 +13,13 @@ bool %%class_name%%::Init(const std::string& configname, std::string* err)
 
 //%%load_config%%
 
-	return true;
+	bool init_finish_ret = this->OnInitFinish();
+	return init_finish_ret;
+}
+
+bool %%class_name%%::OnInitFinish()
+{
+
 }
 
 //%%getfunc_name%%

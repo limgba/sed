@@ -6,19 +6,20 @@
 
 //%%struct_name%%
 
-class %%class_name%% : public ConfigBase
+class %%class_name%% : virtual public ConfigBase
 {
 public:
 	%%class_name%%() = default;
-	~%%class_name%%() = default;
+	virtual ~%%class_name%%() = default;
 	//%%cross_instance%%
 	bool Init(const std::string& configname, std::string* err);
+	virtual bool OnInitFinish();
 //%%getfunc_name%%
 
 //%%getfunc_container%%
 private:
 //%%initfunc_name%%
-private:
+protected:
 //%%member_name%%
 };
 

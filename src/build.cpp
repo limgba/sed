@@ -70,25 +70,36 @@ void compare_files_time(const std::string& xml_path_str, const std::string& cpp_
 
 		std::filesystem::path gen_path(cpp_path_str + "/" + xml_name + "/");
 		std::filesystem::create_directories(gen_path);
-
-		std::string full_cpp_path = gen_path.string() + xml_name + ".cpp";
-		std::string full_head_path = gen_path.string() + xml_name + ".h";
-		std::string template_cpp = xml_path_str + "/" + "template_config.cpp";
-		if (!std::filesystem::exists(template_cpp))
+		struct GenFileName
 		{
-			printf("path[%s] not exists\n", template_cpp.c_str());
-			return;
-		}
-		std::string template_head = xml_path_str + "/" + "template_config.h";
-		if (!std::filesystem::exists(template_head))
+			GenFileName(const std::string& _tf, const std::string& _gf)
+			{
+				template_file = _tf;
+				gen_file = _gf;
+			}
+			std::string template_file;
+			std::string gen_file;
+		};
+		std::vector<GenFileName> gen_file_name_vec
 		{
-			printf("path[%s] not exists\n", template_head.c_str());
-			return;
-		}
+			GenFileName(xml_path_str + "/" + "template_config.cpp", gen_path.string() + xml_name + ".cpp"),
+			GenFileName(xml_path_str + "/" + "template_config.h", gen_path.string() + xml_name + ".h"),
+			GenFileName(xml_path_str + "/" + "inherit_config.cpp", gen_path.string() + xml_name + "_impl.cpp"),
+			GenFileName(xml_path_str + "/" + "inherit_config.h", gen_path.string() + xml_name + "_impl.h"),
+		};
 
-		std::filesystem::copy(template_cpp, full_cpp_path, copyOptions);
-		std::filesystem::copy(template_head, full_head_path, copyOptions);
-		gen(xml_file_data.full_file_name, full_cpp_path);
-		gen(xml_file_data.full_file_name, full_head_path);
+		for (const auto& fn : gen_file_name_vec)
+		{
+			if (!std::filesystem::exists(fn.template_file))
+			{
+				printf("path[%s] not exists\n", fn.template_file.c_str());
+				return;
+			}
+		}
+		for (const auto& fn : gen_file_name_vec)
+		{
+			std::filesystem::copy(fn.template_file, fn.gen_file, copyOptions);
+			gen(xml_file_data.full_file_name, fn.gen_file);
+		}
 	}
 }

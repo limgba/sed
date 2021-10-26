@@ -86,10 +86,6 @@ std::string GenBase::CalcType(const std::string& in_str, CalcTypeRet& ret)
 	{
 		out_str = "ItemID";
 	}
-	else if (std::regex_search(in_str, sm, std::regex("capability|money")))
-	{
-		out_str = "long long";
-	}
 	else if (std::regex_search(in_str, sm, std::regex("attr_type_\\d|attr_value_\\d")))
 	{
 		ret.need_init = false;

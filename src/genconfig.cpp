@@ -59,7 +59,6 @@ void gen(const std::filesystem::path& xml_path, const std::filesystem::path& gen
 		{
 			continue;
 		}
-		gen_base->Gen0(sheet_name);
 		pugi::xml_node data_node = work_sheet_node.child(sheet_name);
 		if (data_node.empty())
 		{
@@ -70,6 +69,7 @@ void gen(const std::filesystem::path& xml_path, const std::filesystem::path& gen
 		{
 			continue;
 		}
+		gen_base->Gen0(sheet_name);
 		std::set<std::string> column_name_set;
 		for (const auto& column : data)
 		{

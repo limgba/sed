@@ -18,7 +18,7 @@ public:
 
 //%%getfunc_container%%
 private:
-	virtual int CheckData();
+	virtual int CheckData(const std::string& configname, std::string& check_data_func_name) = 0;
 //%%initfunc_name%%
 
 protected:

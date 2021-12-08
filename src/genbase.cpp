@@ -99,10 +99,28 @@ std::string GenBase::CalcType(const std::string& in_str, CalcTypeRet& ret)
 		}
 		out_str = "std::map<int, Attribute>";
 	}
+	else if (std::regex_search(in_str, sm, std::regex("str")))
+	{
+		ret.need_init = false;
+		out_str = "std::string";
+	}
+	else if (std::regex_search(in_str, sm, std::regex("(_comma_pipe)|(_pipe_comma)|(_comma)|(_pipe)")))
+	{
+		ret.need_init = false;
+		if (sm[0] == "_comma" || sm[0] == "_pipe")
+		{
+			out_str = "std::vector<int>";
+		}
+		else
+		{
+			out_str = "std::vector<std::vector<<int>>";
+		}
+	}
 	else
 	{
 		out_str = "int";
 	}
+
 	return out_str;
 }
 

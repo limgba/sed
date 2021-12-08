@@ -1,3 +1,3 @@
 #!/bin/sh
 
-./main.out ./config ./tmp 0
+./debug.out ./config ./tmp 0

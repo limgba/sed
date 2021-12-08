@@ -174,6 +174,47 @@ void GenCpp::Gen1(const std::string& member_name)
 		}
 
 	}
+	else if (std::regex_search(member_name, sm, std::regex("str")))
+	{
+		{
+			std::string insert_str = 
+			"\t\tif (!PugiGetSubNodeValue(dataElement, \"" + member_name + "\", cfg." + member_name + "))\n" + 
+			"\t\t{\n" + 
+			"\t\t\treturn -" + member_count_str + ";\n" + 
+			"\t\t}\n";
+			lmb::sed(m_gen_path.string(), 'O', "%%initfunc_content%%", insert_str);
+		}
+	}
+	else if (std::regex_search(member_name, sm, std::regex("(_comma_pipe)|(_pipe_comma)|(_comma)|(_pipe)")))
+	{
+		{
+			std::string insert_str;
+			if (sm[0] == "_comma")
+			{
+				insert_str += "\t\tint " + member_name + "_ret = this->ReadList(dataElement, \"" + member_name + "\", cfg." + member_name + ", \",\");\n";
+			}
+			else if (sm[0] == "_pipe")
+			{
+				insert_str += "\t\tint " + member_name + "_ret = this->ReadList(dataElement, \"" + member_name + "\", cfg." + member_name + ", \"|\");\n";
+			}
+			else
+			{
+				if (sm[1] == "_comma_pipe")
+				{
+					insert_str += "\t\tint " + member_name + "_ret = this->ReadListInList(dataElement, \"" + member_name + "\", cfg." + member_name + ", \",\", \"|\");\n";
+				}
+				else if (sm[2] == "_pipe_comma")
+				{
+					insert_str += "\t\tint " + member_name + "_ret = this->ReadListInList(dataElement, \"" + member_name + "\", cfg." + member_name + ", \"|\", \",\");\n";
+				}
+			}
+			insert_str += "\t\tif (" + member_name + "_ret < 0)\n" + 
+			"\t\t{\n" + 
+			"\t\t\treturn -" + member_count_str + "000 + " + member_name + "_ret;\n" + 
+			"\t\t}\n";
+			lmb::sed(m_gen_path.string(), 'O', "%%initfunc_content%%", insert_str);
+		}
+	}
 	else
 	{
 		{

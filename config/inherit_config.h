@@ -11,7 +11,7 @@ public:
 	virtual ~%%class_name%%() = default;
 
 private:
-	virtual int CheckData() override;
+	virtual int CheckData(const std::string& configname, std::string& check_data_func_name) override;
 
 };
 

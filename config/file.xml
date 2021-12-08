@@ -11,6 +11,11 @@
 			<itemid>999</itemid>
 			<money>999</money>
 			<capability>999</capability>
+			<abc_str>999</abc_str>
+			<abc_comma>1,2</abc_comma>
+			<abc_pipe>1|2</abc_pipe>
+			<abc_comma_pipe>1,2|2,3</abc_comma_pipe>
+			<abc_pipe_comma>1|2,2|3</abc_pipe_comma>
 		</data>
 	</audit_server_attr>
 </config>

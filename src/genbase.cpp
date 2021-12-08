@@ -113,7 +113,7 @@ std::string GenBase::CalcType(const std::string& in_str, CalcTypeRet& ret)
 		}
 		else
 		{
-			out_str = "std::vector<std::vector<<int>>";
+			out_str = "std::vector<std::vector<int>>";
 		}
 	}
 	else

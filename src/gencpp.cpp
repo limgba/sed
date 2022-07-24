@@ -407,7 +407,7 @@ void GenCpp::Gen2()
 
 	{
 		std::string insert_str = 
-		"\t" + m_member_name+ " = tmp_container;";
+		"\t" + m_member_name+ " = std::move(tmp_container);";
 		lmb::sed(m_gen_path.string(), 'O', "%%initfunc_end%%", insert_str);
 	}
 

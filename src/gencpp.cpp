@@ -47,7 +47,7 @@ void GenCpp::Gen0(const std::string& struct_name)
 		std::string insert_str = 
 		"int " + m_class_name + "::Init" + m_sub_class_name + "(PugiXmlNode RootElement)\n" + 
 		"{\n" + 
-		"\t" + this->CalcDynamicType(0) + " tmp_container;\n" + 
+		"\tdecltype(" + m_member_name + ") tmp_container;\n" + 
 		"\tPugiXmlNode dataElement = RootElement.child(\"data\");\n" + 
 		"\twhile (!dataElement.empty())\n" + 
 		"\t{\n" + 

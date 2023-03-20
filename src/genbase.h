@@ -28,6 +28,7 @@ protected:
 	std::string ToClassName(const std::string& in_str);
 	std::string CalcType(const std::string& in_str, CalcTypeRet& ret);
 	std::string CalcDynamicType(size_t index);
+	std::string MapToPair(const std::string& in_str);
 protected:
 	std::filesystem::path m_gen_path;
 	std::string m_def_name;

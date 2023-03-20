@@ -47,7 +47,7 @@ void GenCpp::Gen0(const std::string& struct_name)
 		std::string insert_str = 
 		"int " + m_class_name + "::Init" + m_sub_class_name + "(PugiXmlNode RootElement)\n" + 
 		"{\n" + 
-		"\tdecltype(" + m_member_name + ") tmp_container;\n" + 
+		"\t" + this->CalcDynamicType(0) + " tmp_container;\n" + 
 		"\tPugiXmlNode dataElement = RootElement.child(\"data\");\n" + 
 		"\twhile (!dataElement.empty())\n" + 
 		"\t{\n" + 
@@ -309,7 +309,7 @@ void GenCpp::Gen2()
 				{
 					std::string insert_str = 
 					"\tauto map_it_" + i_str + " = std::lower_bound(container_" + i_str + ".rbegin(), container_" + i_str + ".rend(), " + key_name_str + ", \n" + 
-					"\t\t[](const decltype(container_" + i_str + ")::value_type& element, int value)\n"
+					"\t\t[](const " + this->MapToPair(this->CalcDynamicType(i)) + "& element, int value)\n"
 					"\t\t{\n"
 					"\t\t\treturn element.first > value;\n"
 					"\t\t});\n"
@@ -326,7 +326,7 @@ void GenCpp::Gen2()
 				{
 					std::string insert_str = 
 					"\tauto map_it_" + i_str + " = std::lower_bound(container_" + i_str + ".begin(), container_" + i_str + ".end(), " + key_name_str + ", \n" + 
-					"\t\t[](const decltype(container_" + i_str + ")::value_type& element, int value)\n"
+					"\t\t[](const " + this->MapToPair(this->CalcDynamicType(i)) + "& element, int value)\n"
 					"\t\t{\n"
 					"\t\t\treturn element.first < value;\n"
 					"\t\t});\n"

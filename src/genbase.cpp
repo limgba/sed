@@ -135,6 +135,13 @@ std::string GenBase::CalcDynamicType(size_t index)
 	return ret_str;
 }
 
+std::string GenBase::MapToPair(const std::string& in_str)
+{
+	std::string ret_str = in_str;
+	ret_str.replace(5, 3, "pair");
+	return ret_str;
+}
+
 void GenBase::Gen0(const std::string& struct_name)
 {
 	const std::string hump_struct_name = this->ToClassName(struct_name);

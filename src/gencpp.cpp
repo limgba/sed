@@ -25,7 +25,7 @@ void GenCpp::Gen0(const std::string& struct_name)
 
 	{
 		std::string insert_str = 
-		"const " + m_sub_class_name + "%%getfunc_pointer%% " + m_class_name + "::Get" + m_sub_class_name + "(%%getfunc_args%%)\n" +
+		"const " + m_sub_class_name + "%%getfunc_pointer%% " + m_class_name + "::Get" + m_sub_class_name + "(%%getfunc_args%%) const\n" +
 		"{\n" +
 		"//%%getfunc_content%%\n" +
 		"}";
@@ -380,7 +380,7 @@ void GenCpp::Gen2()
 	if (m_key_vec.size() > 0)
 	{
 		std::string insert_str = 
-		"const " + this->CalcDynamicType(0) + "& " + m_class_name + "::Get" + m_sub_class_name + "Container()\n" + 
+		"const " + this->CalcDynamicType(0) + "& " + m_class_name + "::Get" + m_sub_class_name + "Container() const\n" + 
 		"{\n" + 
 		"\treturn " + m_member_name + ";\n" + 
 		"}\n";

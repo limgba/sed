@@ -93,7 +93,7 @@ void GenHead::Gen2()
 
 	if (m_key_vec.size() > 0)
 	{
-		std::string insert_str = "\tconst " + this->CalcDynamicType(0) + "& Get" + m_sub_class_name + "Container();";
+		std::string insert_str = "\tconst " + this->CalcDynamicType(0) + "& Get" + m_sub_class_name + "Container() const;";
 		lmb::sed(m_gen_path.string(), 'O', "%%getfunc_container%%", insert_str);
 	}
 
@@ -109,7 +109,7 @@ void GenHead::Gen2()
 			}
 			insert_str = insert_str + "int " + key;
 		}
-		insert_str += ");";
+		insert_str += ") const;";
 		lmb::sed(m_gen_path.string(), 'O', "%%getfunc_name%%", insert_str);
 		if (m_key_vec.empty())
 		{

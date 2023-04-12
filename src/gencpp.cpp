@@ -68,11 +68,6 @@ void GenCpp::Gen1(const std::string& member_name)
 			std::string insert_str;
 			{
 				insert_str += "\t\tint " + member_name + "_ret = ItemConfigData::ReadConfigList(dataElement, \"" + read_str + "\", cfg." + member_name + ");\n";
-				{
-					std::string insert_str = 
-					"#include \"servercommon/serverconfig/common/itemconfigdata.hpp\"";
-					lmb::sed(m_gen_path.string(), 's', "%%include itemconfigdata%%", insert_str);
-				}
 			}
 			insert_str = insert_str + 
 			"\t\tif (" + member_name + "_ret < 0)\n" + 
@@ -404,7 +399,6 @@ void GenCpp::Delete()
 	GenBase::Delete();
 	lmb::sed(m_gen_path.string(), 'd', "%%load_config%%", "");
 	lmb::sed(m_gen_path.string(), 'd', "%%include itempool%%", "");
-	lmb::sed(m_gen_path.string(), 'd', "%%include itemconfigdata%%", "");
 	lmb::sed(m_gen_path.string(), 'd', "%%include attribute%%", "");
 	lmb::sed(m_gen_path.string(), 'd', "%%include droppool%%", "");
 }

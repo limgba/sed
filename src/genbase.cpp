@@ -67,7 +67,7 @@ std::string GenBase::CalcType(const std::string& in_str, CalcTypeRet& ret)
 	std::string out_str;
 	ret.variable_name = in_str;
 
-	if (std::regex_search(in_str, sm, std::regex("reward_*item")))
+	if (std::regex_search(in_str, sm, std::regex("reward_item")))
 	{
 		ret.need_init = false;
 		out_str = "std::vector<ItemConfigData>";

@@ -1,5 +1,4 @@
 %%include itempool%%
-%%include itemconfigdata%%
 %%include attribute%%
 %%include droppool%%
 #include "%%file_name%%.h"

@@ -2,6 +2,7 @@
 #define __%%def_name%%_H__
 
 #include "servercommon/xml_adapter.hpp"
+%%include itemconfigdata%%
 
 //%%struct_name%%
 

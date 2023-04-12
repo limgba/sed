@@ -70,8 +70,8 @@ void GenCpp::Gen1(const std::string& member_name)
 				insert_str += "\t\tint " + member_name + "_ret = ItemConfigData::ReadConfigList(dataElement, \"" + read_str + "\", cfg." + member_name + ");\n";
 				{
 					std::string insert_str = 
-					"#include \"item/itempool.h\"";
-					lmb::sed(m_gen_path.string(), 's', "%%include itempool%%", insert_str);
+					"#include \"servercommon/servercomfig/common/itemconfigdata.hpp\"";
+					lmb::sed(m_gen_path.string(), 's', "%%include itemconfigdata%%", insert_str);
 				}
 			}
 			insert_str = insert_str + 
@@ -116,7 +116,6 @@ void GenCpp::Gen1(const std::string& member_name)
 	{
 		{
 			std::string insert_str;
-			if (m_file_name.find("cross") == std::string::npos)
 			{
 				insert_str = insert_str + "\t\tif (!YY_XML_GET_SUB_NODE_VALUE(dataElement, \"" + member_name + "\", cfg." + member_name + ") || nullptr == ITEMPOOL->GetItem(cfg." + member_name + "))\n";
 				{
@@ -124,10 +123,6 @@ void GenCpp::Gen1(const std::string& member_name)
 					"#include \"item/itempool.h\"";
 					lmb::sed(m_gen_path.string(), 's', "%%include itempool%%", insert_str);
 				}
-			}
-			else
-			{
-				insert_str = insert_str + "\t\tif (!YY_XML_GET_SUB_NODE_VALUE(dataElement, \"" + member_name + "\", cfg." + member_name + "))\n";
 			}
 		
 			insert_str = insert_str + "\t\t{\n" + 
@@ -203,7 +198,7 @@ void GenCpp::Gen1(const std::string& member_name)
 	{
 		{
 			std::string insert_str = 
-			"\t\tif (!YY_XML_FUNCTION_NODE_TYPE(dataElement, \"" + member_name + "\", cfg." + member_name + ") || cfg." + member_name + " < 0)\n" + 
+			"\t\tif (!YY_XML_GET_SUB_NODE_VALUE(dataElement, \"" + member_name + "\", cfg." + member_name + ") || cfg." + member_name + " < 0)\n" + 
 			"\t\t{\n" + 
 			"\t\t\treturn -" + member_count_str + ";\n" + 
 			"\t\t}\n";
@@ -409,6 +404,7 @@ void GenCpp::Delete()
 	GenBase::Delete();
 	lmb::sed(m_gen_path.string(), 'd', "%%load_config%%", "");
 	lmb::sed(m_gen_path.string(), 'd', "%%include itempool%%", "");
+	lmb::sed(m_gen_path.string(), 'd', "%%include itemconfigdata%%", "");
 	lmb::sed(m_gen_path.string(), 'd', "%%include attribute%%", "");
 	lmb::sed(m_gen_path.string(), 'd', "%%include droppool%%", "");
 }

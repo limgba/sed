@@ -2,8 +2,8 @@
 
 xml=file
 xml_path=/root/sed/${xml}.xml
-rm -f config/*.xml
-cp $xml_path ./config
+#rm -f config/*.xml
+#cp $xml_path ./config
 
 if [ ! -d tmp ]; then
 	mkdir tmp

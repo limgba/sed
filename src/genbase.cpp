@@ -75,7 +75,7 @@ std::string GenBase::CalcType(const std::string& in_str, CalcTypeRet& ret)
 	else if (std::regex_search(in_str, sm, std::regex("drop")))
 	{
 		ret.need_init = false;
-		out_str = "std::vector<UInt16>";
+		out_str = "std::vector<RewardID>";
 	}
 	else if (std::regex_search(in_str, sm, std::regex("area")))
 	{

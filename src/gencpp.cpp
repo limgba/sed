@@ -11,17 +11,6 @@ GenCpp::GenCpp(const std::filesystem::path& gen_path)
 void GenCpp::Replace()
 {
 	GenBase::Replace();
-
-	if (m_file_name.find("cross") != std::string::npos)
-	{
-		std::string insert_str = 
-		m_class_name + "& " + m_class_name + "::Instance()\n" +
-		"{\n" +
-		"\tstatic " + m_class_name + "instance;\n" +
-		"\treturn instance;\n" +
-		"}";
-		lmb::sed(m_gen_path.string(), 'O', "%%cross_instance%%", insert_str);
-	}
 }
 
 void GenCpp::Gen0(const std::string& struct_name)
@@ -30,7 +19,7 @@ void GenCpp::Gen0(const std::string& struct_name)
 
 	{
 		std::string insert_str = 
-		"\tPUGI_XML_LOAD_CONFIG(\"" + struct_name + "\", Init" + m_sub_class_name + ");";
+		"\tYY_XML_LOAD_CONFIG(\"" + struct_name + "\", Init" + m_sub_class_name + ");";
 		lmb::sed(m_gen_path.string(), 'O', "%%load_config%%", insert_str);
 	}
 
@@ -45,11 +34,11 @@ void GenCpp::Gen0(const std::string& struct_name)
 
 	{
 		std::string insert_str = 
-		"int " + m_class_name + "::Init" + m_sub_class_name + "(PugiXmlNode RootElement)\n" + 
+		"int " + m_class_name + "::Init" + m_sub_class_name + "(YY_XML_FUNCTION_NODE_TYPE RootElement)\n" + 
 		"{\n" + 
 		"\tdecltype(" + m_member_name + ") tmp_container;\n" + 
-		"\tPugiXmlNode dataElement = RootElement.child(\"data\");\n" + 
-		"\twhile (!dataElement.empty())\n" + 
+		"\tYY_XML_NODE dataElement = YY_XML_FIRST_CHILD_ELEMENT(RootElement, \"data\");\n" + 
+		"\twhile (!YY_XML_NODE_IS_EMPTY(dataElement))\n" + 
 		"\t{\n" + 
 		"//%%initfunc_def_cfg%%\n" +
 		"//%%initfunc_content%%\n" +
@@ -77,11 +66,6 @@ void GenCpp::Gen1(const std::string& member_name)
 				read_str = read_str.substr(0, read_str.size() - 5);
 			}
 			std::string insert_str;
-			if (m_file_name.find("cross") != std::string::npos)
-			{
-				insert_str += "\t\tint " + member_name + "_ret = ItemConfigData::ReadConfigListNoCheck(dataElement, \"" + read_str + "\", cfg." + member_name + ");\n";
-			}
-			else
 			{
 				insert_str += "\t\tint " + member_name + "_ret = ItemConfigData::ReadConfigList(dataElement, \"" + read_str + "\", cfg." + member_name + ");\n";
 				{
@@ -134,7 +118,7 @@ void GenCpp::Gen1(const std::string& member_name)
 			std::string insert_str;
 			if (m_file_name.find("cross") == std::string::npos)
 			{
-				insert_str = insert_str + "\t\tif (!PugiGetSubNodeValue(dataElement, \"" + member_name + "\", cfg." + member_name + ") || nullptr == ITEMPOOL->GetItem(cfg." + member_name + "))\n";
+				insert_str = insert_str + "\t\tif (!YY_XML_GET_SUB_NODE_VALUE(dataElement, \"" + member_name + "\", cfg." + member_name + ") || nullptr == ITEMPOOL->GetItem(cfg." + member_name + "))\n";
 				{
 					std::string insert_str = 
 					"#include \"item/itempool.h\"";
@@ -143,7 +127,7 @@ void GenCpp::Gen1(const std::string& member_name)
 			}
 			else
 			{
-				insert_str = insert_str + "\t\tif (!PugiGetSubNodeValue(dataElement, \"" + member_name + "\", cfg." + member_name + "))\n";
+				insert_str = insert_str + "\t\tif (!YY_XML_GET_SUB_NODE_VALUE(dataElement, \"" + member_name + "\", cfg." + member_name + "))\n";
 			}
 		
 			insert_str = insert_str + "\t\t{\n" + 
@@ -178,7 +162,7 @@ void GenCpp::Gen1(const std::string& member_name)
 	{
 		{
 			std::string insert_str = 
-			"\t\tif (!PugiGetSubNodeValue(dataElement, \"" + member_name + "\", cfg." + member_name + "))\n" + 
+			"\t\tif (!YY_XML_GET_SUB_NODE_VALUE(dataElement, \"" + member_name + "\", cfg." + member_name + "))\n" + 
 			"\t\t{\n" + 
 			"\t\t\treturn -" + member_count_str + ";\n" + 
 			"\t\t}\n";
@@ -219,7 +203,7 @@ void GenCpp::Gen1(const std::string& member_name)
 	{
 		{
 			std::string insert_str = 
-			"\t\tif (!PugiGetSubNodeValue(dataElement, \"" + member_name + "\", cfg." + member_name + ") || cfg." + member_name + " < 0)\n" + 
+			"\t\tif (!YY_XML_FUNCTION_NODE_TYPE(dataElement, \"" + member_name + "\", cfg." + member_name + ") || cfg." + member_name + " < 0)\n" + 
 			"\t\t{\n" + 
 			"\t\t\treturn -" + member_count_str + ";\n" + 
 			"\t\t}\n";

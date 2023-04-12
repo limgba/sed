@@ -9,13 +9,6 @@ GenHead::GenHead(const std::filesystem::path& gen_path)
 void GenHead::Replace()
 {
 	GenBase::Replace();
-
-	if (m_file_name.find("cross") != std::string::npos)
-	{
-		std::string insert_str = 
-		"\tstatic " + m_class_name + "& Instance();";
-		lmb::sed(m_gen_path.string(), 'O', "%%cross_instance%%", insert_str);
-	}
 }
 
 void GenHead::Gen0(const std::string& struct_name)
@@ -37,7 +30,7 @@ void GenHead::Gen0(const std::string& struct_name)
 
 	{
 		std::string insert_str = 
-		"\tint Init" + m_sub_class_name + "(PugiXmlNode RootElement);";
+		"\tint Init" + m_sub_class_name + "(YY_XML_FUNCTION_NODE_TYPE RootElement);";
 		lmb::sed(m_gen_path.string(), 'O', "%%initfunc_name%%", insert_str);
 	}
 }

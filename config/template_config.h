@@ -6,12 +6,12 @@
 
 //%%struct_name%%
 
-class %%class_name%% : virtual public ILogicConfig
+class %%class_name%% : public ILogicConfig
 {
 public:
 	%%class_name%%() = default;
 	virtual ~%%class_name%%() = default;
-	bool Init(const std::string& configname, std::string* err);
+	virtual bool Init(const std::string& configname, std::string* err);
 
 //%%getfunc_name%%
 

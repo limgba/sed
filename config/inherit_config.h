@@ -4,7 +4,7 @@
 #include "%%base_file_name%%.h"
 
 
-class %%class_name%% : virtual public %%base_class_name%%
+class %%class_name%% : public %%base_class_name%%
 {
 public:
 	%%class_name%%() = default;

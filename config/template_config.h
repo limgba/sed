@@ -2,8 +2,6 @@
 #define __%%def_name%%_H__
 
 #include "servercommon/xml_adapter.hpp"
-#include <map>
-#include <vector>
 
 //%%struct_name%%
 
@@ -12,6 +10,7 @@ class %%class_name%% : virtual public ILogicConfig
 public:
 	%%class_name%%() = default;
 	virtual ~%%class_name%%() = default;
+	static const %%class_name%%* Get();
 	bool Init(const std::string& configname, std::string* err);
 
 //%%getfunc_name%%

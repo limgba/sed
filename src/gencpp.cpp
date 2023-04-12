@@ -70,7 +70,7 @@ void GenCpp::Gen1(const std::string& member_name)
 				insert_str += "\t\tint " + member_name + "_ret = ItemConfigData::ReadConfigList(dataElement, \"" + read_str + "\", cfg." + member_name + ");\n";
 				{
 					std::string insert_str = 
-					"#include \"servercommon/servercomfig/common/itemconfigdata.hpp\"";
+					"#include \"servercommon/serverconfig/common/itemconfigdata.hpp\"";
 					lmb::sed(m_gen_path.string(), 's', "%%include itemconfigdata%%", insert_str);
 				}
 			}
@@ -344,7 +344,7 @@ void GenCpp::Gen2()
 			{
 				std::string insert_str = 
 				"\t\tcontainer_" + count_str + " = cfg;\n\n" +
-				"\t\tdataElement = dataElement.next_sibling();\n";
+				"\t\tdataElement = YY_XML_NEXT_SIBLING(dataElement);\n";
 				lmb::sed(m_gen_path.string(), 'O', "%%initfunc_content%%", insert_str);
 			}
 		}

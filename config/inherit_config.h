@@ -9,7 +9,8 @@ class %%class_name%% : public %%base_class_name%%
 public:
 	%%class_name%%() = default;
 	virtual ~%%class_name%%() = default;
-	static const %%class_name%%* Get();
+	const %%class_name%%* Get();
+	%%class_name%%* GetMutableConfig();
 
 private:
 	virtual int CheckData(const std::string& configname, std::string& check_data_func_name) override;

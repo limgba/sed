@@ -70,6 +70,15 @@ void GenHead::Gen1(const std::string& member_name)
 		"#include \"servercommon/serverconfig/common/itemconfigdata.hpp\"";
 		lmb::sed(m_gen_path.string(), 's', "%%include itemconfigdata%%", insert_str);
 	}
+	if (member_name.find("weight_list") != std::string::npos
+		|| member_name.find("rand_exclude") != std::string::npos
+		|| member_name.find("rand") != std::string::npos
+	)
+	{
+		std::string insert_str =
+		"#include \"servercommon/utility/lmb_random.h\"";
+		lmb::sed(m_gen_path.string(), 's', "%%include lmb_random%%", insert_str);
+	}
 }
 void GenHead::Gen2()
 {
@@ -128,5 +137,6 @@ void GenHead::Delete()
 	lmb::sed(m_gen_path.string(), 'd', "%%struct_name%%", "");
 	lmb::sed(m_gen_path.string(), 'd', "%%member_name%%", "");
 	lmb::sed(m_gen_path.string(), 'd', "%%include itemconfigdata%%", "");
+	lmb::sed(m_gen_path.string(), 'd', "%%include lmb_random%%", "");
 
 }

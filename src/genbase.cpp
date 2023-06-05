@@ -104,6 +104,11 @@ std::string GenBase::CalcType(const std::string& in_str, CalcTypeRet& ret)
 		ret.need_init = false;
 		out_str = "std::string";
 	}
+	else if (std::regex_search(in_str, sm, std::regex("weight_list")))
+	{
+		ret.need_init = false;
+		out_str = "lmb::RandomVector<int, int>";
+	}
 	else if (std::regex_search(in_str, sm, std::regex("(_comma_pipe)|(_pipe_comma)|(_comma)|(_pipe)")))
 	{
 		ret.need_init = false;
@@ -162,6 +167,11 @@ void GenBase::Gen1(const std::string& member_name)
 	else if (std::regex_search(member_name, sm, std::regex("key|_range|_rrange")))
 	{
 		m_key_vec.push_back("std::map<int, ");
+		m_key_name_vec.push_back(member_name);
+	}
+	else if (std::regex_search(member_name, sm, std::regex("rand_exclude|rand")))
+	{
+		m_key_vec.push_back("lmb::RandomVector<int, ");
 		m_key_name_vec.push_back(member_name);
 	}
 	++m_member_count;

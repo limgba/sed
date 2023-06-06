@@ -2,6 +2,7 @@
 #include "lmb_sed.h"
 #include <regex>
 #include <stdio.h>
+#include <algorithm>
 
 GenCpp::GenCpp(const std::filesystem::path& gen_path)
 	: GenBase(gen_path)
@@ -441,8 +442,19 @@ void GenCpp::Gen2()
 
 	if (m_key_vec.size() > 0)
 	{
+		std::string const_str = "";
+		auto find_it = std::find_if(m_column_name_vec.begin(), m_column_name_vec.end(), [](const std::string& column_name)
+		{
+			bool ret1 = column_name.find("rand") != std::string::npos;
+			bool ret2 = column_name.find("weight_list") != std::string::npos;
+			return ret1 || ret2;
+		});
+		if (m_column_name_vec.end() == find_it)
+		{
+			const_str += "const ";
+		}
 		std::string insert_str = 
-		"const " + this->CalcDynamicType(0) + "& " + m_class_name + "::Get" + m_sub_class_name + "Container()\n" + 
+		const_str + this->CalcDynamicType(0) + "& " + m_class_name + "::Get" + m_sub_class_name + "Container()\n" + 
 		"{\n" + 
 		"\treturn " + m_member_name + ";\n" + 
 		"}\n";

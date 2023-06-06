@@ -41,6 +41,7 @@ protected:
 	int m_member_count;
 	std::vector<std::string> m_key_vec;
 	std::vector<std::string> m_key_name_vec;
+	std::vector<std::string> m_column_name_vec;
 };
 
 #endif

@@ -154,6 +154,7 @@ void GenBase::Gen0(const std::string& struct_name)
 	m_member_name = "m_" + this->ToFileName(struct_name) + "_container";
 	m_key_vec.clear();
 	m_key_name_vec.clear();
+	m_column_name_vec.clear();
 	m_member_count = 0;
 }
 void GenBase::Gen1(const std::string& member_name)
@@ -174,6 +175,7 @@ void GenBase::Gen1(const std::string& member_name)
 		m_key_vec.push_back("lmb::RandomVector<int, ");
 		m_key_name_vec.push_back(member_name);
 	}
+	m_column_name_vec.push_back(member_name);
 	++m_member_count;
 }
 void GenBase::Gen2() {}

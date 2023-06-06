@@ -1,5 +1,6 @@
 #include "genhead.h"
 #include "lmb_sed.h"
+#include <algorithm>
 
 GenHead::GenHead(const std::filesystem::path& gen_path)
 	: GenBase(gen_path), m_need_init_count(0)
@@ -102,7 +103,18 @@ void GenHead::Gen2()
 
 	if (m_key_vec.size() > 0)
 	{
-		std::string insert_str = "\tconst " + this->CalcDynamicType(0) + "& Get" + m_sub_class_name + "Container();";
+		std::string const_str = "\t";
+		auto find_it = std::find_if(m_column_name_vec.begin(), m_column_name_vec.end(), [](const std::string& column_name)
+		{
+			bool ret1 = column_name.find("rand") != std::string::npos;
+			bool ret2 = column_name.find("weight_list") != std::string::npos;
+			return ret1 || ret2;
+		});
+		if (m_column_name_vec.end() == find_it)
+		{
+			const_str += "const ";
+		}
+		std::string insert_str = const_str + this->CalcDynamicType(0) + "& Get" + m_sub_class_name + "Container();";
 		lmb::sed(m_gen_path.string(), 'O', "%%getfunc_container%%", insert_str);
 	}
 

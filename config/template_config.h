@@ -4,6 +4,7 @@
 #include "servercommon/xml_adapter.hpp"
 %%include itemconfigdata%%
 %%include lmb_random%%
+%%include attributesconfig%%
 
 //%%struct_name%%
 

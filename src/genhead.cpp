@@ -80,6 +80,12 @@ void GenHead::Gen1(const std::string& member_name)
 		"#include \"servercommon/utility/lmb_random.h\"";
 		lmb::sed(m_gen_path.string(), 's', "%%include lmb_random%%", insert_str);
 	}
+	if (attribute_set.end() != attribute_set.find(member_name))
+	{
+		std::string insert_str =
+		"#include \"servercommon/attributesconfig.h\"";
+		lmb::sed(m_gen_path.string(), 's', "%%include attributesconfig%%", insert_str);
+	}
 }
 void GenHead::Gen2()
 {
@@ -150,5 +156,6 @@ void GenHead::Delete()
 	lmb::sed(m_gen_path.string(), 'd', "%%member_name%%", "");
 	lmb::sed(m_gen_path.string(), 'd', "%%include itemconfigdata%%", "");
 	lmb::sed(m_gen_path.string(), 'd', "%%include lmb_random%%", "");
+	lmb::sed(m_gen_path.string(), 'd', "%%include attributesconfig%%", "");
 
 }

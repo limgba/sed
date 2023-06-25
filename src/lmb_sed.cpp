@@ -13,6 +13,7 @@ bool lmb::sed(const std::string& file_name, char edit_type, const std::string& r
 		'i',
 		's',
 		'd',
+		'm',
 	};
 	auto vec_it = std::find(edit_type_vec.begin(), edit_type_vec.end(), edit_type);
 	if (edit_type_vec.end() == vec_it)
@@ -39,6 +40,7 @@ bool lmb::sed(const std::string& file_name, char edit_type, const std::string& r
 		std::cout << "ofs open fail" << file_name << std::endl;
 		return false;
 	}
+	bool find_m = false;
 	std::regex rg(regex_str);
 	std::smatch sm;
 	std::string next_line("\n");
@@ -92,6 +94,16 @@ bool lmb::sed(const std::string& file_name, char edit_type, const std::string& r
 			}
 		}
 		break;
+		case 'm':
+		{
+			if (!find_m && std::regex_search(str, sm, rg))
+			{
+				find_m = true;
+			}
+			ofs.write(str.c_str(), str.size());
+			ofs.write(next_line.c_str(), next_line.size());
+		}
+		break;
 		default:
 		{
 			ofs.write(str.c_str(), str.size());
@@ -101,6 +113,10 @@ bool lmb::sed(const std::string& file_name, char edit_type, const std::string& r
 		}
 	}
 	ofs.close();
+	if (edit_type == 'm')
+	{
+		return find_m;
+	}
 	return true;
 }
 

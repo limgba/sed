@@ -83,7 +83,7 @@ void GenHead::Gen1(const std::string& member_name)
 	if (attribute_set.end() != attribute_set.find(member_name))
 	{
 		std::string insert_str =
-		"#include \"servercommon/attributesconfig.h\"";
+		"#include \"servercommon/attributesconfig.hpp\"";
 		lmb::sed(m_gen_path.string(), 's', "%%include attributesconfig%%", insert_str);
 	}
 }

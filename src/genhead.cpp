@@ -80,7 +80,7 @@ void GenHead::Gen1(const std::string& member_name)
 		"#include \"servercommon/utility/lmb_random.h\"";
 		lmb::sed(m_gen_path.string(), 's', "%%include lmb_random%%", insert_str);
 	}
-	if (attribute_set.end() != attribute_set.find(member_name))
+	if (g_attribute_set.end() != g_attribute_set.find(member_name))
 	{
 		std::string insert_str =
 		"#include \"servercommon/attributesconfig.hpp\"";

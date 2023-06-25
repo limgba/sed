@@ -121,12 +121,12 @@ std::string GenBase::CalcType(const std::string& in_str, CalcTypeRet& ret)
 			out_str = "std::vector<std::vector<int>>";
 		}
 	}
-	else if (attribute_set.end() != attribute_set.find(in_str))
+	else if (g_attribute_set.end() != g_attribute_set.find(in_str))
 	{
 		ret.need_init = false;
 		ret.variable_name = "attributes_config";
 		out_str = "AttributesConfig";
-		auto insert_ret = m_declare_once_set.insert(out_str);
+		auto insert_ret = m_declare_once_set_map["attribute"].insert(out_str);
 		if (!insert_ret.second)
 		{
 			ret.need_declare = false;
@@ -166,7 +166,7 @@ void GenBase::Gen0(const std::string& struct_name)
 	m_key_vec.clear();
 	m_key_name_vec.clear();
 	m_column_name_vec.clear();
-	m_declare_once_set.clear();
+	m_declare_once_set_map.clear();
 	m_member_count = 0;
 }
 void GenBase::Gen1(const std::string& member_name)

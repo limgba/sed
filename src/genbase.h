@@ -5,6 +5,7 @@
 #include <vector>
 #include <filesystem>
 #include <unordered_set>
+#include <unordered_map>
 
 struct CalcTypeRet
 {
@@ -13,7 +14,7 @@ struct CalcTypeRet
 	std::string variable_name;
 };
 
-static const std::unordered_set<std::string> attribute_set = 
+static const std::unordered_set<std::string> g_attribute_set = 
 {
 	"maxhp",
 	"per_maxhp",
@@ -155,7 +156,7 @@ protected:
 	std::vector<std::string> m_key_vec;
 	std::vector<std::string> m_key_name_vec;
 	std::vector<std::string> m_column_name_vec;
-	std::unordered_set<std::string> m_declare_once_set;
+	std::unordered_map<std::string, std::unordered_set<std::string>> m_declare_once_set_map;
 };
 
 #endif

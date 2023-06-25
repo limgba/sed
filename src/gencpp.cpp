@@ -216,13 +216,13 @@ void GenCpp::Gen1(const std::string& member_name)
 			lmb::sed(m_gen_path.string(), 'O', "%%initfunc_content%%", insert_str);
 		}
 	}
-	else if (attribute_set.end() != attribute_set.find(member_name))
+	else if (g_attribute_set.end() != g_attribute_set.find(member_name))
 	{
 		if (!lmb::sed(m_gen_path.string(), 'm', "%%" + m_sub_class_name + "_AttributesConfig%%", ""))
 		{
 			std::string insert_str = 
 			"\t\tcfg.attributes_config.ReadConfig(dataElement);\n"
-			"%%" + m_sub_class_name + "_AttributesConfig%%\n";
+			"%%" + m_sub_class_name + "_AttributesConfig%%";
 			lmb::sed(m_gen_path.string(), 'O', "%%initfunc_content%%", insert_str);
 		}
 	}
@@ -476,6 +476,7 @@ void GenCpp::Gen2()
 	lmb::sed(m_gen_path.string(), 'd', "%%initfunc_content%%", "");
 	lmb::sed(m_gen_path.string(), 'd', "%%initfunc_end%%", "");
 	lmb::sed(m_gen_path.string(), 's', "%%getfunc_args%%", "");
+	lmb::sed(m_gen_path.string(), 'd', "%%" + m_sub_class_name + "_AttributesConfig%%", "");
 }
 
 void GenCpp::Delete()
@@ -485,5 +486,4 @@ void GenCpp::Delete()
 	lmb::sed(m_gen_path.string(), 'd', "%%include itempool%%", "");
 	lmb::sed(m_gen_path.string(), 'd', "%%include attribute%%", "");
 	lmb::sed(m_gen_path.string(), 'd', "%%include droppool%%", "");
-	lmb::sed(m_gen_path.string(), 'd', "%%" + m_sub_class_name + "_AttributesConfig%%", "");
 }

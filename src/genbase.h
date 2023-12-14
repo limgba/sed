@@ -15,17 +15,17 @@ struct CalcTypeRet
 class GenBase
 {
 public:
-	GenBase(const std::filesystem::path& gen_path);
+	GenBase(const std::filesystem::path& gen_path, const std::string& xml_name);
 	virtual void Replace();
 	virtual void Gen0(const std::string& struct_name);
 	virtual void Gen1(const std::string& member_name);
 	virtual void Gen2();
 	virtual void Delete();
 
+	static std::string ToDefName(const std::string& in_str);
+	static std::string ToFileName(const std::string& in_str);
+	static std::string ToClassName(const std::string& in_str);
 protected:
-	std::string ToDefName(const std::string& in_str);
-	std::string ToFileName(const std::string& in_str);
-	std::string ToClassName(const std::string& in_str);
 	std::string CalcType(const std::string& in_str, CalcTypeRet& ret);
 	std::string CalcDynamicType(size_t index);
 	std::string MapToPair(const std::string& in_str);

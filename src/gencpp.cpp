@@ -3,8 +3,8 @@
 #include <regex>
 #include <stdio.h>
 
-GenCpp::GenCpp(const std::filesystem::path& gen_path)
-	: GenBase(gen_path)
+GenCpp::GenCpp(const std::filesystem::path& gen_path, const std::string& xml_name)
+	: GenBase(gen_path, xml_name)
 {
 }
 
@@ -12,16 +12,16 @@ void GenCpp::Replace()
 {
 	GenBase::Replace();
 
-	if (m_file_name.find("cross") != std::string::npos)
-	{
-		std::string insert_str = 
-		m_class_name + "& " + m_class_name + "::Instance()\n" +
-		"{\n" +
-		"\tstatic " + m_class_name + "instance;\n" +
-		"\treturn instance;\n" +
-		"}";
-		lmb::sed(m_gen_path.string(), 'O', "%%cross_instance%%", insert_str);
-	}
+//	if (m_file_name.find("cross") != std::string::npos)
+//	{
+//		std::string insert_str = 
+//		m_class_name + "& " + m_class_name + "::Instance()\n" +
+//		"{\n" +
+//		"\tstatic " + m_class_name + "instance;\n" +
+//		"\treturn instance;\n" +
+//		"}";
+//		lmb::sed(m_gen_path.string(), 'O', "%%cross_instance%%", insert_str);
+//	}
 }
 
 void GenCpp::Gen0(const std::string& struct_name)
@@ -77,11 +77,11 @@ void GenCpp::Gen1(const std::string& member_name)
 				read_str = read_str.substr(0, read_str.size() - 5);
 			}
 			std::string insert_str;
-			if (m_file_name.find("cross") != std::string::npos)
-			{
-				insert_str += "\t\tint " + member_name + "_ret = ItemConfigData::ReadConfigListNoCheck(dataElement, \"" + read_str + "\", cfg." + member_name + ");\n";
-			}
-			else
+//			if (m_file_name.find("cross") != std::string::npos)
+//			{
+//				insert_str += "\t\tint " + member_name + "_ret = ItemConfigData::ReadConfigListNoCheck(dataElement, \"" + read_str + "\", cfg." + member_name + ");\n";
+//			}
+//			else
 			{
 				insert_str += "\t\tint " + member_name + "_ret = ItemConfigData::ReadConfigList(dataElement, \"" + read_str + "\", cfg." + member_name + ");\n";
 				{
@@ -132,16 +132,16 @@ void GenCpp::Gen1(const std::string& member_name)
 	{
 		{
 			std::string insert_str;
-			if (m_file_name.find("cross") == std::string::npos)
-			{
-				insert_str = insert_str + "\t\tif (!PugiGetSubNodeValue(dataElement, \"" + member_name + "\", cfg." + member_name + ") || nullptr == ITEMPOOL->GetItem(cfg." + member_name + "))\n";
-				{
-					std::string insert_str = 
-					"#include \"item/itempool.h\"";
-					lmb::sed(m_gen_path.string(), 's', "%%include itempool%%", insert_str);
-				}
-			}
-			else
+//			if (m_file_name.find("cross") == std::string::npos)
+//			{
+//				insert_str = insert_str + "\t\tif (!PugiGetSubNodeValue(dataElement, \"" + member_name + "\", cfg." + member_name + ") || nullptr == ITEMPOOL->GetItem(cfg." + member_name + "))\n";
+//				{
+//					std::string insert_str = 
+//					"#include \"item/itempool.h\"";
+//					lmb::sed(m_gen_path.string(), 's', "%%include itempool%%", insert_str);
+//				}
+//			}
+//			else
 			{
 				insert_str = insert_str + "\t\tif (!PugiGetSubNodeValue(dataElement, \"" + member_name + "\", cfg." + member_name + "))\n";
 			}

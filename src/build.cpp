@@ -1,5 +1,6 @@
 #include "build.h"
 #include "genconfig.h"
+#include "genbase.h"
 #include <filesystem>
 #include <chrono>
 #include <regex>
@@ -62,32 +63,35 @@ void compare_files_time(const std::string& xml_path_str, const std::string& cpp_
 	{
 		const auto& xml_name = xml_pair.first;
 		const auto& xml_file_data = xml_pair.second;
-		auto it = cpp_file_map.find(xml_name);
+		std::string cpp_file_name = GenBase::ToFileName(xml_name);
+		auto it = cpp_file_map.find(cpp_file_name);
 		if (cpp_file_map.end() != it && g_is_compare_file_time && xml_file_data.last_write_time <= it->second.last_write_time)
 		{
 			continue;
 		}
 
-		std::filesystem::path gen_path(cpp_path_str + "/" + xml_name + "/");
+		std::filesystem::path gen_path(cpp_path_str + "/" + cpp_file_name + "/");
 		std::filesystem::create_directories(gen_path);
 		struct GenFileName
 		{
-			GenFileName(const std::string& _tf, const std::string& _gf, bool _cc)
+			GenFileName(const std::string& _tf, const std::string& _gf, const std::string& _xn, bool _cc)
 			{
 				template_file = _tf;
 				gen_file = _gf;
+				xml_name = _xn;
 				can_cover = _cc;
 			}
 			std::string template_file;
 			std::string gen_file;
+			std::string xml_name;
 			bool can_cover;
 		};
 		std::vector<GenFileName> gen_file_name_vec
 		{
-			GenFileName(xml_path_str + "/" + "template_config.cpp", gen_path.string() + xml_name + ".cpp", true),
-			GenFileName(xml_path_str + "/" + "template_config.h", gen_path.string() + xml_name + ".h", true),
-			GenFileName(xml_path_str + "/" + "inherit_config.cpp", gen_path.string() + xml_name + "_impl.cpp", false),
-			GenFileName(xml_path_str + "/" + "inherit_config.h", gen_path.string() + xml_name + "_impl.h", false),
+			GenFileName(xml_path_str + "/" + "template_config.cpp", gen_path.string() + cpp_file_name + ".cpp", xml_name, true),
+			GenFileName(xml_path_str + "/" + "template_config.h", gen_path.string() + cpp_file_name + ".h", xml_name, true),
+			GenFileName(xml_path_str + "/" + "inherit_config.cpp", gen_path.string() + cpp_file_name + "impl.cpp", xml_name + "_impl", false),
+			GenFileName(xml_path_str + "/" + "inherit_config.h", gen_path.string() + cpp_file_name + "impl.h", xml_name + "_impl", false),
 		};
 
 		for (const auto& fn : gen_file_name_vec)
@@ -105,7 +109,8 @@ void compare_files_time(const std::string& xml_path_str, const std::string& cpp_
 				continue;
 			}
 			std::filesystem::copy(fn.template_file, fn.gen_file, copyOptions);
-			gen(xml_file_data.full_file_name, fn.gen_file);
+			gen(xml_file_data.full_file_name, fn.gen_file, fn.xml_name);
 		}
 	}
 }
+

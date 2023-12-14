@@ -3,13 +3,13 @@
 #include <algorithm>
 #include <regex>
 
-GenBase::GenBase(const std::filesystem::path& gen_path)
+GenBase::GenBase(const std::filesystem::path& gen_path, const std::string& xml_name)
 	: m_gen_path(gen_path), m_member_count(0)
 {
-	m_def_name = this->ToDefName(m_gen_path.stem().string());
-	m_file_name = this->ToFileName(m_gen_path.stem().string());
-	m_class_name = this->ToClassName(m_gen_path.stem().string());
-	if (m_file_name.find("_impl") != std::string::npos)
+	m_def_name = GenBase::ToDefName(xml_name);
+	m_file_name = GenBase::ToFileName(xml_name);
+	m_class_name = GenBase::ToClassName(xml_name);
+	if (xml_name.find("_impl") != std::string::npos)
 	{
 		m_base_file_name = m_file_name.substr(0, m_file_name.size() - 5);
 	}
@@ -40,6 +40,8 @@ std::string GenBase::ToFileName(const std::string& in_str)
 {
 	std::string out_str = in_str;
 	std::transform(out_str.begin(), out_str.end(), out_str.begin(), [](unsigned char c) { return std::tolower(c); });
+	auto it = std::remove(out_str.begin(), out_str.end(), '_');
+	out_str.erase(it, out_str.end());
 	return out_str;
 }
 
@@ -144,9 +146,9 @@ std::string GenBase::MapToPair(const std::string& in_str)
 
 void GenBase::Gen0(const std::string& struct_name)
 {
-	const std::string hump_struct_name = this->ToClassName(struct_name);
+	const std::string hump_struct_name = GenBase::ToClassName(struct_name);
 	m_sub_class_name = m_class_name + hump_struct_name;
-	m_member_name = "m_" + this->ToFileName(struct_name) + "_container";
+	m_member_name = "m_" + GenBase::ToFileName(struct_name) + "_container";
 	m_key_vec.clear();
 	m_key_name_vec.clear();
 	m_member_count = 0;

@@ -1,8 +1,8 @@
 #include "genhead.h"
 #include "lmb_sed.h"
 
-GenHead::GenHead(const std::filesystem::path& gen_path)
-	: GenBase(gen_path), m_need_init_count(0)
+GenHead::GenHead(const std::filesystem::path& gen_path, const std::string& xml_name)
+	: GenBase(gen_path, xml_name), m_need_init_count(0)
 {
 }
 
@@ -10,12 +10,12 @@ void GenHead::Replace()
 {
 	GenBase::Replace();
 
-	if (m_file_name.find("cross") != std::string::npos)
-	{
-		std::string insert_str = 
-		"\tstatic " + m_class_name + "& Instance();";
-		lmb::sed(m_gen_path.string(), 'O', "%%cross_instance%%", insert_str);
-	}
+//	if (m_file_name.find("cross") != std::string::npos)
+//	{
+//		std::string insert_str = 
+//		"\tstatic " + m_class_name + "& Instance();";
+//		lmb::sed(m_gen_path.string(), 'O', "%%cross_instance%%", insert_str);
+//	}
 }
 
 void GenHead::Gen0(const std::string& struct_name)

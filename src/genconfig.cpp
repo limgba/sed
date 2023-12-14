@@ -7,7 +7,7 @@
 #include <set>
 #include <memory>
 
-void gen(const std::filesystem::path& xml_path, const std::filesystem::path& gen_path)
+void gen(const std::filesystem::path& xml_path, const std::filesystem::path& gen_path, const std::string& xml_name)
 {
 	if (!std::filesystem::exists(xml_path))
 	{
@@ -35,11 +35,11 @@ void gen(const std::filesystem::path& xml_path, const std::filesystem::path& gen
 	std::unique_ptr<GenBase> gen_base(nullptr);
 	if (gen_path.extension().string() == ".h")
 	{
-		gen_base.reset(new GenHead(gen_path));
+		gen_base.reset(new GenHead(gen_path, xml_name));
 	}
 	else if (gen_path.extension().string() == ".cpp")
 	{
-		gen_base.reset(new GenCpp(gen_path));
+		gen_base.reset(new GenCpp(gen_path, xml_name));
 	}
 	else
 	{

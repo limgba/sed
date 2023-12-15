@@ -3,6 +3,8 @@
 
 #include "servercommon/configbase.h"
 #include "servercommon/pugixml/pugixml_adapter.hpp"
+%%include itemconfigdata%%
+%%include lmb_random%%
 
 //%%struct_name%%
 

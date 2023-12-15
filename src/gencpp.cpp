@@ -174,6 +174,20 @@ void GenCpp::Gen1(const std::string& member_name)
 		}
 
 	}
+	else if (std::regex_search(member_name, sm, std::regex("weight_list")))
+	{
+		{
+			std::string insert_str = "\t\tstd::string " + member_name + "_str;\n";
+			insert_str += 
+			"\t\tif (!PugiGetSubNodeValue(dataElement, \"" + member_name + "\", " + member_name + "_str) || " + member_name + "_str.empty())\n" + 
+			"\t\t{\n" + 
+			"\t\t\treturn -" + member_count_str + ";\n" + 
+			"\t\t}\n";
+			insert_str += "\t\tstd::vector<int>" + member_name + "_vec = SplitStringInt(" + member_name + "_str, \",\");\n";
+			insert_str += "\t\tcfg." + member_name + ".push_back(" + member_name + "_vec);\n";
+			lmb::sed(m_gen_path.string(), 'O', "%%initfunc_content%%", insert_str);
+		}
+	}
 	else if (std::regex_search(member_name, sm, std::regex("str")))
 	{
 		{
@@ -342,6 +356,42 @@ void GenCpp::Gen2()
 			{
 				std::string insert_str = 
 				"\t\tauto& container_" + count_str + " = container_" + i_str + "[cfg." + key_name_str + "];\n";
+				lmb::sed(m_gen_path.string(), 'O', "%%initfunc_content%%", insert_str);
+			}
+		}
+		else if (key_str.find("lmb::RandomVec") != std::string::npos)
+		{
+			if (std::regex_search(key_name_str, sm, std::regex("rand_exclude")))
+			{
+				std::string insert_str = 
+				"\tauto* container_" + count_str + "_ptr = container_" + i_str + ".RandomValueExclude(0 != " + key_name_str + ");\n" +
+				"\tif (nullptr == container_" + count_str + "_ptr)\n" + 
+				"\t{\n" + 
+				"\t\treturn nullptr;\n" + 
+				"\t}\n" +
+				"\tauto& container_" + count_str + " = *container_" + count_str + "_ptr;\n";
+				lmb::sed(m_gen_path.string(), 'O', "%%getfunc_content%%", insert_str);
+			}
+			else if (std::regex_search(key_name_str, sm, std::regex("rand")))
+			{
+				std::string insert_str = 
+				"\tauto* container_" + count_str + "_ptr = container_" + i_str + ".RandomValue();\n" +
+				"\tif (nullptr == container_" + count_str + "_ptr)\n" + 
+				"\t{\n" + 
+				"\t\treturn nullptr;\n" + 
+				"\t}\n" +
+				"\tauto& container_" + count_str + " = *container_" + count_str + "_ptr;\n";
+				lmb::sed(m_gen_path.string(), 'O', "%%getfunc_content%%", insert_str);
+			}
+
+			{
+				std::string insert_str;
+				insert_str = insert_str + 
+				"\t\t{\n" + 
+				"\t\t\t" + this->CalcDynamicType(i + 1) + " tmp;\n" + 
+				"\t\t\tcontainer_" + i_str + ".push_back(cfg." + key_name_str + ", tmp);\n" +
+				"\t\t}\n" + 
+				"\t\tauto& container_" + count_str + " = container_" + i_str + ".back();\n";
 				lmb::sed(m_gen_path.string(), 'O', "%%initfunc_content%%", insert_str);
 			}
 		}

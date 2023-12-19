@@ -132,18 +132,18 @@ void GenCpp::Gen1(const std::string& member_name)
 	{
 		{
 			std::string insert_str;
-//			if (m_file_name.find("cross") == std::string::npos)
+//			if (m_file_name.find("cross") != std::string::npos)
 //			{
-//				insert_str = insert_str + "\t\tif (!PugiGetSubNodeValue(dataElement, \"" + member_name + "\", cfg." + member_name + ") || nullptr == ITEMPOOL->GetItem(cfg." + member_name + "))\n";
-//				{
-//					std::string insert_str = 
-//					"#include \"item/itempool.h\"";
-//					lmb::sed(m_gen_path.string(), 's', "%%include itempool%%", insert_str);
-//				}
+//				insert_str = insert_str + "\t\tif (!PugiGetSubNodeValue(dataElement, \"" + member_name + "\", cfg." + member_name + "))\n";
 //			}
 //			else
 			{
-				insert_str = insert_str + "\t\tif (!PugiGetSubNodeValue(dataElement, \"" + member_name + "\", cfg." + member_name + "))\n";
+				insert_str = insert_str + "\t\tif (!PugiGetSubNodeValue(dataElement, \"" + member_name + "\", cfg." + member_name + ") || nullptr == ITEMPOOL->GetItem(cfg." + member_name + "))\n";
+				{
+					std::string insert_str = 
+					"#include \"item/itempool.h\"";
+					lmb::sed(m_gen_path.string(), 's', "%%include itempool%%", insert_str);
+				}
 			}
 		
 			insert_str = insert_str + "\t\t{\n" + 

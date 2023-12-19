@@ -11,7 +11,7 @@ GenBase::GenBase(const std::filesystem::path& gen_path, const std::string& xml_n
 	m_class_name = GenBase::ToClassName(xml_name);
 	if (xml_name.find("_impl") != std::string::npos)
 	{
-		m_base_file_name = m_file_name.substr(0, m_file_name.size() - 5);
+		m_base_file_name = m_file_name.substr(0, m_file_name.size() - 4);
 	}
 	if (m_class_name.find("Impl") != std::string::npos)
 	{

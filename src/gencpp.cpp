@@ -273,7 +273,7 @@ void GenCpp::Gen1(const std::string& member_name)
 			"\t\t{\n"
 			"\t\t\tstd::string " + member_name + "_str;\n" +
 			"\t\t\tPugiGetSubNodeValue(dataElement, \"" + member_name + "\", " + member_name + "_str);\n" +
-			"\t\t\tstd::vector<int> " + member_name + "_vec = SplitString(" + member_name + "_str, \":\");\n" +
+			"\t\t\tstd::vector<int> " + member_name + "_vec = SplitStringInt(" + member_name + "_str, \":\");\n" +
 			"\t\t\tif ((int)" + member_name + "_vec.size() != " + std::to_string(m_sub_class_column_member_count) + ")\n" +
 			"\t\t\t{\n" +
 			"\t\t\t\treturn -" + member_count_str + ";\n" + 

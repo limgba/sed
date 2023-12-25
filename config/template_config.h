@@ -6,6 +6,7 @@
 %%include itemconfigdata%%
 %%include lmb_random%%
 
+//%%struct_column_name%%
 //%%struct_name%%
 
 class %%class_name%% : virtual public ConfigBase

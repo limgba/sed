@@ -4,7 +4,7 @@
 #include <regex>
 
 GenBase::GenBase(const std::filesystem::path& gen_path, const std::string& xml_name)
-	: m_gen_path(gen_path), m_member_count(0)
+	: m_gen_path(gen_path), m_sub_class_column_member_count(0), m_member_count(0)
 {
 	m_def_name = GenBase::ToDefName(xml_name);
 	m_file_name = GenBase::ToFileName(xml_name);
@@ -111,6 +111,16 @@ std::string GenBase::CalcType(const std::string& in_str, CalcTypeRet& ret)
 		ret.need_init = false;
 		out_str = "lmb::RandomVector<int, int>";
 	}
+	else if (std::regex_search(in_str, sm, std::regex("_\\d+parameter_list")))
+	{
+		ret.need_init = false;
+		out_str = "std::vector<" + m_sub_class_column_name + ">";
+	}
+	else if (std::regex_search(in_str, sm, std::regex("_\\d+parameter")))
+	{
+		ret.need_init = false;
+		out_str = m_sub_class_column_name;
+	}
 	else if (std::regex_search(in_str, sm, std::regex("(_comma_pipe)|(_pipe_comma)|(_comma)|(_pipe)")))
 	{
 		ret.need_init = false;
@@ -160,6 +170,10 @@ void GenBase::Gen0(const std::string& struct_name)
 }
 void GenBase::Gen1(const std::string& member_name)
 {
+	const std::string hump_column_name = GenBase::ToClassName(member_name);
+	m_sub_class_column_name = m_sub_class_name + hump_column_name;
+	m_sub_class_column_member_count = 0;
+
 	std::smatch sm;
 	if (std::regex_search(member_name, sm, std::regex("index")))
 	{
@@ -175,6 +189,13 @@ void GenBase::Gen1(const std::string& member_name)
 	{
 		m_key_vec.push_back("lmb::RandomVector<int, ");
 		m_key_name_vec.push_back(member_name);
+	}
+	else if (std::regex_search(member_name, sm, std::regex("_(\\d+)parameter")))
+	{
+		if (sm.size() == 2)
+		{
+			m_sub_class_column_member_count = atoi(sm.str(1).c_str());
+		}
 	}
 	++m_member_count;
 }

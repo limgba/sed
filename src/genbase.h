@@ -37,6 +37,8 @@ protected:
 	std::string m_base_class_name;
 	std::string m_base_file_name;
 	std::string m_sub_class_name;
+	std::string m_sub_class_column_name;
+	int m_sub_class_column_member_count;
 	std::string m_member_name;
 	int m_member_count;
 	std::vector<std::string> m_key_vec;

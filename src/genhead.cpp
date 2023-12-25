@@ -1,5 +1,6 @@
 #include "genhead.h"
 #include "lmb_sed.h"
+#include <regex>
 
 GenHead::GenHead(const std::filesystem::path& gen_path, const std::string& xml_name)
 	: GenBase(gen_path, xml_name), m_need_init_count(0)
@@ -45,6 +46,7 @@ void GenHead::Gen0(const std::string& struct_name)
 void GenHead::Gen1(const std::string& member_name)
 {
 	GenBase::Gen1(member_name);
+
 	CalcTypeRet ret;
 	std::string member_type = this->CalcType(member_name, ret);
 	if (ret.need_init)
@@ -71,13 +73,15 @@ void GenHead::Gen1(const std::string& member_name)
 		}
 		lmb::sed(m_gen_path.string(), 'O', "%%struct_member%%", insert_str);
 	}
+
+	std::smatch sm;
 	if (member_name.find("reward_item") != std::string::npos)
 	{
 		std::string insert_str =
 		"#include \"servercommon/struct/itemlistparam.h\"";
 		lmb::sed(m_gen_path.string(), 's', "%%include itemconfigdata%%", insert_str);
 	}
-	if (member_name.find("weight_list") != std::string::npos
+	else if (member_name.find("weight_list") != std::string::npos
 		|| member_name.find("rand_exclude") != std::string::npos
 		|| member_name.find("rand") != std::string::npos
 	)
@@ -85,6 +89,26 @@ void GenHead::Gen1(const std::string& member_name)
 		std::string insert_str =
 		"#include \"servercommon/utility/lmb_random.h\"";
 		lmb::sed(m_gen_path.string(), 's', "%%include lmb_random%%", insert_str);
+	}
+	else if (std::regex_search(member_name, sm, std::regex("_\\d+parameter")))
+	{
+		std::string insert_str = 
+		"struct " + m_sub_class_column_name + "\n" + 
+		"{\n" + 
+		"\t" + m_sub_class_column_name + "()\n" + 
+		"\t\t:\n";
+		for (int i = 0; i < m_sub_class_column_member_count - 1; ++i)
+		{
+			insert_str += "\t\tparam_" + std::to_string(i) + "(0),\n";
+		}
+		insert_str += "\t\tparam_" + std::to_string(m_sub_class_column_member_count - 1) + "(0)\n";
+		insert_str += "\t{}\n";
+		for (int i = 0; i < m_sub_class_column_member_count; ++i)
+		{
+			insert_str += "\tint param_" + std::to_string(i) + ";\n";
+		}
+		insert_str += "};";
+		lmb::sed(m_gen_path.string(), 'O', "%%struct_column_name%%", insert_str);
 	}
 }
 void GenHead::Gen2()
@@ -141,6 +165,7 @@ void GenHead::Gen2()
 void GenHead::Delete()
 {
 	GenBase::Delete();
+	lmb::sed(m_gen_path.string(), 'd', "%%struct_column_name%%", "");
 	lmb::sed(m_gen_path.string(), 'd', "%%struct_name%%", "");
 	lmb::sed(m_gen_path.string(), 'd', "%%member_name%%", "");
 	lmb::sed(m_gen_path.string(), 'd', "%%include itemconfigdata%%", "");

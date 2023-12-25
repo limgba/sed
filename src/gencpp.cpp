@@ -240,6 +240,52 @@ void GenCpp::Gen1(const std::string& member_name)
 			lmb::sed(m_gen_path.string(), 'O', "%%initfunc_content%%", insert_str);
 		}
 	}
+	else if (std::regex_search(member_name, sm, std::regex("_\\d+parameter_list")))
+	{
+		{
+			std::string insert_str = 
+			"\t\t{\n"
+			"\t\t\tstd::string " + member_name + "_str;\n" +
+			"\t\t\tPugiGetSubNodeValue(dataElement, \"" + member_name + "\", " + member_name + "_str);\n" +
+			"\t\t\tstd::vector<std::string> " + member_name + "_vec = SplitString(" + member_name + "_str, \",\");\n" +
+			"\t\t\tfor (const std::string& " + member_name + " : " + member_name + "_vec)\n" +
+			"\t\t\t{\n" +
+			"\t\t\t\t" + m_sub_class_column_name + " " + ToFileName(m_sub_class_column_name) + ";\n" +
+			"\t\t\t\tstd::vector<int> " + member_name + "_sub_vec = SplitStringInt(" + member_name + ", \":\");\n" +
+			"\t\t\t\tif ((int)" + member_name + "_sub_vec.size() != " + std::to_string(m_sub_class_column_member_count) + ")\n" +
+			"\t\t\t\t{\n" +
+			"\t\t\t\t\treturn -" + member_count_str + ";\n" + 
+			"\t\t\t\t}\n";
+			for (int i = 0; i < m_sub_class_column_member_count; ++i)
+			{
+				insert_str += "\t\t\t\t" + ToFileName(m_sub_class_column_name) + ".param_" + std::to_string(i) + " = " + member_name + "_sub_vec[" + std::to_string(i) + "];\n";
+			}
+			insert_str += "\t\t\t\tcfg." + member_name + ".push_back(" + ToFileName(m_sub_class_column_name) + ");\n" +
+			"\t\t\t}\n" +
+			"\t\t}\n";
+			lmb::sed(m_gen_path.string(), 'O', "%%initfunc_content%%", insert_str);
+		}
+	}
+	else if (std::regex_search(member_name, sm, std::regex("_\\d+parameter")))
+	{
+		{
+			std::string insert_str = 
+			"\t\t{\n"
+			"\t\t\tstd::string " + member_name + "_str;\n" +
+			"\t\t\tPugiGetSubNodeValue(dataElement, \"" + member_name + "\", " + member_name + "_str);\n" +
+			"\t\t\tstd::vector<int> " + member_name + "_vec = SplitString(" + member_name + "_str, \":\");\n" +
+			"\t\t\tif ((int)" + member_name + "_vec.size() != " + std::to_string(m_sub_class_column_member_count) + ")\n" +
+			"\t\t\t{\n" +
+			"\t\t\t\treturn -" + member_count_str + ";\n" + 
+			"\t\t\t}\n";
+			for (int i = 0; i < m_sub_class_column_member_count; ++i)
+			{
+				insert_str += "\t\t\tcfg." + member_name + ".param_" + std::to_string(i) + " = " + member_name + "_vec[" + std::to_string(i) + "];\n";
+			}
+			insert_str += "\t\t}\n";
+			lmb::sed(m_gen_path.string(), 'O', "%%initfunc_content%%", insert_str);
+		}
+	}
 	else
 	{
 		{

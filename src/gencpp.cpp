@@ -165,11 +165,13 @@ void GenCpp::Gen1(const std::string& member_name)
 			"\t\t}\n";
 			lmb::sed(m_gen_path.string(), 'O', "%%initfunc_content%%", insert_str);
 
-			{
+			/*
+ 			{
 				std::string insert_str = 
 				"#include \"servercommon/configcommon.h\"";
 				lmb::sed(m_gen_path.string(), 's', "%%include attribute%%", insert_str);
 			}
+			*/
 		}
 
 	}

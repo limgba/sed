@@ -157,7 +157,8 @@ void GenCpp::Gen1(const std::string& member_name)
 	{
 		if (member_name == "attr_type_0")
 		{
-			std::string insert_str = insert_str + "\t\tint " + member_name + "_ret = AttrCommonConfig::ReadAttrTypeAndValue(dataElement, \"attr\", cfg.attr_vec);\n" + 
+			std::string insert_str;
+			insert_str = insert_str + "\t\tint " + member_name + "_ret = AttrCommonConfig::ReadAttrTypeAndValue(dataElement, \"attr\", cfg.attr_vec);\n" + 
 			"\t\tif (" + member_name + "_ret < 0)\n" +
 			"\t\t{\n" + 
 			"\t\t\treturn -" + member_count_str + "000 + " + member_name + "_ret;\n" + 

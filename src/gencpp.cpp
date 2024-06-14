@@ -157,9 +157,7 @@ void GenCpp::Gen1(const std::string& member_name)
 	{
 		if (member_name == "attr_type_0")
 		{
-			std::string insert_str =
-			"\t\tReadAttrTypeValueConfig config_tool;\n";
-			insert_str = insert_str + "\t\tint " + member_name + "_ret = config_tool.Read(dataElement, \"attr\", cfg.attr_map);\n" + 
+			std::string insert_str = insert_str + "\t\tint " + member_name + "_ret = AttrCommonConfig::ReadAttrTypeAndValue(dataElement, \"attr\", cfg.attr_vec);\n" + 
 			"\t\tif (" + member_name + "_ret < 0)\n" +
 			"\t\t{\n" + 
 			"\t\t\treturn -" + member_count_str + "000 + " + member_name + "_ret;\n" + 
@@ -168,7 +166,7 @@ void GenCpp::Gen1(const std::string& member_name)
 
 			{
 				std::string insert_str = 
-				"#include \"obj/character/attribute.hpp\"";
+				"#include \"servercommon/configcommon.h\"";
 				lmb::sed(m_gen_path.string(), 's', "%%include attribute%%", insert_str);
 			}
 		}

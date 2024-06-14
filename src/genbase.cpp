@@ -97,9 +97,9 @@ std::string GenBase::CalcType(const std::string& in_str, CalcTypeRet& ret)
 		}
 		else
 		{
-			ret.variable_name = "attr_map";
+			ret.variable_name = "attr_vec";
 		}
-		out_str = "std::map<int, Attribute>";
+		out_str = "std::vector<AttrCommonConfig::AttrPair>";
 	}
 	else if (std::regex_search(in_str, sm, std::regex("str")))
 	{

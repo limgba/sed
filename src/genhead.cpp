@@ -136,14 +136,21 @@ void GenHead::Gen2()
 		std::string insert_str = "\tconst " + this->CalcDynamicType(0) + "& Get" + m_sub_class_name + "Container();";
 		lmb::sed(m_gen_path.string(), 'O', "%%getfunc_container%%", insert_str);
 	}
+	else
+	{
+		std::string insert_str = "\tconst " + this->CalcDynamicType(0) + "& Get" + m_sub_class_name + "();";
+		lmb::sed(m_gen_path.string(), 'O', "%%getfunc_name%%", insert_str);
+	}
 
+	const size_t key_name_vec_size = m_key_name_vec.size();
+	for (size_t i = 0; i < key_name_vec_size; ++i)
 	{
 		std::string insert_str = 
-		"\tconst " + m_sub_class_name + "%%getfunc_pointer%% Get" + m_sub_class_name + "(";
-		for (size_t i = 0; i < m_key_name_vec.size(); ++i)
+		"\tconst " + this->CalcDynamicType(key_name_vec_size - i) + "* Get" + m_sub_class_name + std::to_string(key_name_vec_size - i) + "(";
+		for (size_t j = 0; j < key_name_vec_size - i; ++j)
 		{
-			const auto& key = m_key_name_vec[i];
-			if (i > 0)
+			const auto& key = m_key_name_vec[j];
+			if (j > 0)
 			{
 				insert_str = insert_str + ", ";
 			}
@@ -151,14 +158,11 @@ void GenHead::Gen2()
 		}
 		insert_str += ");";
 		lmb::sed(m_gen_path.string(), 'O', "%%getfunc_name%%", insert_str);
-		if (m_key_vec.empty())
-		{
-			lmb::sed(m_gen_path.string(), 's', "%%getfunc_pointer%%", "&");
-		}
-		else
-		{
-			lmb::sed(m_gen_path.string(), 's', "%%getfunc_pointer%%", "*");
-		}
+	}
+
+	{
+		std::string insert_str = "";
+		lmb::sed(m_gen_path.string(), 'O', "%%getfunc_name%%", insert_str);
 	}
 }
 

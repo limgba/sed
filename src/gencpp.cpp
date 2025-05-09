@@ -36,15 +36,6 @@ void GenCpp::Gen0(const std::string& struct_name)
 
 	{
 		std::string insert_str = 
-		"const " + m_sub_class_name + "%%getfunc_pointer%% " + m_class_name + "::Get" + m_sub_class_name + "(%%getfunc_args%%)\n" +
-		"{\n" +
-		"//%%getfunc_content%%\n" +
-		"}";
-		lmb::sed(m_gen_path.string(), 'O', "%%getfunc_name%%", insert_str);
-	}
-
-	{
-		std::string insert_str = 
 		"int " + m_class_name + "::Init" + m_sub_class_name + "(PugiXmlNode RootElement)\n" + 
 		"{\n" + 
 		"\tdecltype(" + m_member_name + ") tmp_container;\n" + 
@@ -303,6 +294,171 @@ void GenCpp::Gen2()
 {
 	GenBase::Gen2();
 	std::smatch sm;
+
+	// getfunction
+	if (m_key_vec.size() > 0)
+	{
+		std::string insert_str = 
+			"const " + this->CalcDynamicType(0) + "& " + m_class_name + "::Get" + m_sub_class_name + "Container()\n" +
+			"{\n" +
+			"\treturn " + m_member_name + ";\n" +
+			"}\n";
+		lmb::sed(m_gen_path.string(), 'O', "%%getfunc_container%%", insert_str);
+	}
+	else
+	{
+		std::string insert_str = 
+			"const " + this->CalcDynamicType(0) + "& " + m_class_name + "::Get" + m_sub_class_name + "()\n" +
+			"{\n" +
+			"\treturn " + m_member_name + ";\n" +
+			"}\n";
+		lmb::sed(m_gen_path.string(), 'O', "%%getfunc_name%%", insert_str);
+	}
+
+
+	const size_t key_vec_size = m_key_vec.size();
+	const size_t key_name_vec_size = m_key_name_vec.size();
+	for (size_t i = 0; i < key_vec_size && i < key_name_vec_size; ++i)
+	{
+		{
+			std::string insert_str = 
+				"const " + this->CalcDynamicType(key_name_vec_size - i) + "* " + m_class_name + "::Get" + m_sub_class_name + std::to_string(key_name_vec_size - i) + "(%%getfunc_args%%)\n" +
+				"{\n" +
+				"//%%getfunc_content%%\n" +
+				"}\n";
+			lmb::sed(m_gen_path.string(), 'O', "%%getfunc_name%%", insert_str);
+		}
+
+		if (!m_key_vec.empty())
+		{
+			std::string insert_str = 
+				"\tauto& container_0 = " + m_member_name + ";";
+			lmb::sed(m_gen_path.string(), 'O', "%%getfunc_content%%", insert_str);
+		}
+
+		for (size_t j = 0; j < key_vec_size - i && j < key_name_vec_size - i; ++j)
+		{
+			const size_t count = j + 1;
+			const std::string count_str = std::to_string(count);
+			const std::string j_str = std::to_string(j);
+			const std::string& key_str = m_key_vec[j];
+			const std::string& key_name_str = m_key_name_vec[j];
+			if (key_str.find("vector") != std::string::npos)
+			{
+				std::string insert_str = 
+					"\tif (" + key_name_str + " < 0 || (size_t)" + key_name_str + " >= container_" + j_str + ".size())\n" + 
+					"\t{\n" + 
+					"\t\treturn nullptr;\n" + 
+					"\t}\n" +
+					"\tauto& container_" + count_str + " = container_" + j_str + "[" + key_name_str + "];\n";
+				lmb::sed(m_gen_path.string(), 'O', "%%getfunc_content%%", insert_str);
+			}
+			else if (key_str.find("map") != std::string::npos)
+			{
+				if (std::regex_search(key_name_str, sm, std::regex("key")))
+				{
+					std::string insert_str = 
+						"\tauto map_it_" + j_str + " = container_" + j_str + ".find(" + key_name_str + ");\n" + 
+						"\tif (map_it_" + j_str + " == container_" + j_str + ".end())\n" + 
+						"\t{\n" + 
+						"\t\treturn nullptr;\n" + 
+						"\t}\n" +
+						"\tauto& container_" + count_str + " = map_it_" + j_str + "->second;\n";
+					lmb::sed(m_gen_path.string(), 'O', "%%getfunc_content%%", insert_str);
+				}
+				else if (std::regex_search(key_name_str, sm, std::regex("_range")))
+				{
+					{
+						std::string insert_str = 
+							"\tauto map_it_" + j_str + " = std::lower_bound(container_" + j_str + ".rbegin(), container_" + j_str + ".rend(), " + key_name_str + ", \n" + 
+							"\t\t[](const " + this->MapToPair(this->CalcDynamicType(i)) + "& element, int value)\n"
+							"\t\t{\n"
+							"\t\t\treturn element.first > value;\n"
+							"\t\t});\n"
+							"\tif (map_it_" + j_str + " == container_" + j_str + ".rend())\n"
+							"\t{\n"
+							"\t\treturn nullptr;\n"
+							"\t}\n"
+							"\tauto& container_" + count_str + " = map_it_" + j_str + "->second;\n";
+						lmb::sed(m_gen_path.string(), 'O', "%%getfunc_content%%", insert_str);
+					}
+				}
+				else if (std::regex_search(key_name_str, sm, std::regex("_rrange")))
+				{
+					{
+						std::string insert_str = 
+							"\tauto map_it_" + j_str + " = std::lower_bound(container_" + j_str + ".begin(), container_" + j_str + ".end(), " + key_name_str + ", \n" + 
+							"\t\t[](const " + this->MapToPair(this->CalcDynamicType(i)) + "& element, int value)\n"
+							"\t\t{\n"
+							"\t\t\treturn element.first < value;\n"
+							"\t\t});\n"
+							"\tif (map_it_" + j_str +" == container_" + j_str + ".end())\n"
+							"\t{\n"
+							"\t\treturn nullptr;\n"
+							"\t}\n"
+							"\tauto& container_" + count_str + " = map_it_" + j_str + "->second;\n";
+						lmb::sed(m_gen_path.string(), 'O', "%%getfunc_content%%", insert_str);
+					}
+				}
+			}
+			else if (key_str.find("lmb::RandomVec") != std::string::npos)
+			{
+				if (std::regex_search(key_name_str, sm, std::regex("rand_exclude")))
+				{
+					std::string insert_str = 
+						"\tauto* container_" + count_str + "_ptr = container_" + j_str + ".RandomValueExclude(0 != " + key_name_str + ");\n" +
+						"\tif (nullptr == container_" + count_str + "_ptr)\n" + 
+						"\t{\n" + 
+						"\t\treturn nullptr;\n" + 
+						"\t}\n" +
+						"\tauto& container_" + count_str + " = *container_" + count_str + "_ptr;\n";
+					lmb::sed(m_gen_path.string(), 'O', "%%getfunc_content%%", insert_str);
+				}
+				else if (std::regex_search(key_name_str, sm, std::regex("rand")))
+				{
+					std::string insert_str = 
+						"\tauto* container_" + count_str + "_ptr = container_" + j_str + ".RandomValue();\n" +
+						"\tif (nullptr == container_" + count_str + "_ptr)\n" + 
+						"\t{\n" + 
+						"\t\treturn nullptr;\n" + 
+						"\t}\n" +
+						"\tauto& container_" + count_str + " = *container_" + count_str + "_ptr;\n";
+					lmb::sed(m_gen_path.string(), 'O', "%%getfunc_content%%", insert_str);
+				}
+			}
+			{
+				std::string insert_str;
+				if (j > 0)
+				{
+					insert_str = ", ";
+				}
+				insert_str = insert_str + "int " + key_name_str + "%%getfunc_args%%";
+				lmb::sed(m_gen_path.string(), 's', "%%getfunc_args%%", insert_str);
+			}
+			if (j + 1 == m_key_vec.size() - i)
+			{
+				{
+					std::string insert_str = 
+						"\treturn &container_" + count_str + ";";
+					lmb::sed(m_gen_path.string(), 'O', "%%getfunc_content%%", insert_str);
+				}
+			}
+		}
+
+		if (m_key_vec.empty())
+		{
+			{
+				std::string insert_str = 
+					"\treturn " + m_member_name + ";";
+				lmb::sed(m_gen_path.string(), 'O', "%%getfunc_content%%", insert_str);
+			}
+		}
+
+		lmb::sed(m_gen_path.string(), 'd', "%%getfunc_content%%", "");
+		lmb::sed(m_gen_path.string(), 's', "%%getfunc_args%%", "");
+	}
+
+	// initfunction
 	if (m_member_count > 0)
 	{
 		std::string insert_str = 
@@ -316,13 +472,6 @@ void GenCpp::Gen2()
 		lmb::sed(m_gen_path.string(), 'O', "%%initfunc_content%%", insert_str);
 	}
 
-	if (!m_key_vec.empty())
-	{
-		std::string insert_str = 
-		"\tauto& container_0 = " + m_member_name + ";";
-		lmb::sed(m_gen_path.string(), 'O', "%%getfunc_content%%", insert_str);
-	}
-	
 	for (size_t i = 0; i < m_key_vec.size() && i < m_key_name_vec.size(); ++i)
 	{
 		const size_t count = i + 1;
@@ -332,16 +481,6 @@ void GenCpp::Gen2()
 		const std::string& key_name_str = m_key_name_vec[i];
 		if (key_str.find("vector") != std::string::npos)
 		{
-			{
-				std::string insert_str = 
-				"\tif (" + key_name_str + " < 0 || (size_t)" + key_name_str + " >= container_" + i_str + ".size())\n" + 
-				"\t{\n" + 
-				"\t\treturn nullptr;\n" + 
-				"\t}\n" +
-				"\tauto& container_" + count_str + " = container_" + i_str + "[" + key_name_str + "];\n";
-				lmb::sed(m_gen_path.string(), 'O', "%%getfunc_content%%", insert_str);
-			}
-
 			{
 				std::string insert_str = 
 				"\t\tif ((size_t)cfg." + key_name_str + " > container_" + i_str + ".size())\n" + 
@@ -363,52 +502,6 @@ void GenCpp::Gen2()
 		}
 		else if (key_str.find("map") != std::string::npos)
 		{
-			if (std::regex_search(key_name_str, sm, std::regex("key")))
-			{
-				std::string insert_str = 
-				"\tauto map_it_" + i_str + " = container_" + i_str + ".find(" + key_name_str + ");\n" + 
-				"\tif (map_it_" + i_str + " == container_" + i_str + ".end())\n" + 
-				"\t{\n" + 
-				"\t\treturn nullptr;\n" + 
-				"\t}\n" +
-				"\tauto& container_" + count_str + " = map_it_" + i_str + "->second;\n";
-				lmb::sed(m_gen_path.string(), 'O', "%%getfunc_content%%", insert_str);
-			}
-			else if (std::regex_search(key_name_str, sm, std::regex("_range")))
-			{
-				{
-					std::string insert_str = 
-					"\tauto map_it_" + i_str + " = std::lower_bound(container_" + i_str + ".rbegin(), container_" + i_str + ".rend(), " + key_name_str + ", \n" + 
-					"\t\t[](const " + this->MapToPair(this->CalcDynamicType(i)) + "& element, int value)\n"
-					"\t\t{\n"
-					"\t\t\treturn element.first > value;\n"
-					"\t\t});\n"
-					"\tif (map_it_" + i_str +" == container_" + i_str + ".rend())\n"
-					"\t{\n"
-					"\t\treturn nullptr;\n"
-					"\t}\n"
-					"\tauto& container_" + count_str + " = map_it_" + i_str + "->second;\n";
-					lmb::sed(m_gen_path.string(), 'O', "%%getfunc_content%%", insert_str);
-				}
-			}
-			else if (std::regex_search(key_name_str, sm, std::regex("_rrange")))
-			{
-				{
-					std::string insert_str = 
-					"\tauto map_it_" + i_str + " = std::lower_bound(container_" + i_str + ".begin(), container_" + i_str + ".end(), " + key_name_str + ", \n" + 
-					"\t\t[](const " + this->MapToPair(this->CalcDynamicType(i)) + "& element, int value)\n"
-					"\t\t{\n"
-					"\t\t\treturn element.first < value;\n"
-					"\t\t});\n"
-					"\tif (map_it_" + i_str +" == container_" + i_str + ".end())\n"
-					"\t{\n"
-					"\t\treturn nullptr;\n"
-					"\t}\n"
-					"\tauto& container_" + count_str + " = map_it_" + i_str + "->second;\n";
-					lmb::sed(m_gen_path.string(), 'O', "%%getfunc_content%%", insert_str);
-				}
-			}
-
 			{
 				std::string insert_str = 
 				"\t\tauto& container_" + count_str + " = container_" + i_str + "[cfg." + key_name_str + "];\n";
@@ -417,29 +510,6 @@ void GenCpp::Gen2()
 		}
 		else if (key_str.find("lmb::RandomVec") != std::string::npos)
 		{
-			if (std::regex_search(key_name_str, sm, std::regex("rand_exclude")))
-			{
-				std::string insert_str = 
-				"\tauto* container_" + count_str + "_ptr = container_" + i_str + ".RandomValueExclude(0 != " + key_name_str + ");\n" +
-				"\tif (nullptr == container_" + count_str + "_ptr)\n" + 
-				"\t{\n" + 
-				"\t\treturn nullptr;\n" + 
-				"\t}\n" +
-				"\tauto& container_" + count_str + " = *container_" + count_str + "_ptr;\n";
-				lmb::sed(m_gen_path.string(), 'O', "%%getfunc_content%%", insert_str);
-			}
-			else if (std::regex_search(key_name_str, sm, std::regex("rand")))
-			{
-				std::string insert_str = 
-				"\tauto* container_" + count_str + "_ptr = container_" + i_str + ".RandomValue();\n" +
-				"\tif (nullptr == container_" + count_str + "_ptr)\n" + 
-				"\t{\n" + 
-				"\t\treturn nullptr;\n" + 
-				"\t}\n" +
-				"\tauto& container_" + count_str + " = *container_" + count_str + "_ptr;\n";
-				lmb::sed(m_gen_path.string(), 'O', "%%getfunc_content%%", insert_str);
-			}
-
 			{
 				std::string insert_str;
 				insert_str = insert_str + 
@@ -451,23 +521,8 @@ void GenCpp::Gen2()
 				lmb::sed(m_gen_path.string(), 'O', "%%initfunc_content%%", insert_str);
 			}
 		}
-		{
-			std::string insert_str; 
-			if (i > 0)
-			{
-				insert_str = ", ";
-			}
-			insert_str = insert_str + "int " + key_name_str + "%%getfunc_args%%";
-			lmb::sed(m_gen_path.string(), 's', "%%getfunc_args%%", insert_str);
-		}
 		if (i + 1 == m_key_vec.size())
 		{
-			{
-				std::string insert_str = 
-				"\treturn &container_" + count_str + ";";
-				lmb::sed(m_gen_path.string(), 'O', "%%getfunc_content%%", insert_str);
-			}
-
 			{
 				std::string insert_str = 
 				"\t\tcontainer_" + count_str + " = cfg;\n\n" +
@@ -478,11 +533,6 @@ void GenCpp::Gen2()
 	}
 	if (m_key_vec.empty())
 	{
-		{
-			std::string insert_str = 
-			"\treturn " + m_member_name + ";";
-			lmb::sed(m_gen_path.string(), 'O', "%%getfunc_content%%", insert_str);
-		}
 		if (m_member_count > 0)
 		{
 			std::string insert_str = 
@@ -495,13 +545,7 @@ void GenCpp::Gen2()
 			"\t\tbreak;";
 			lmb::sed(m_gen_path.string(), 'O', "%%initfunc_content%%", insert_str);
 		}
-		lmb::sed(m_gen_path.string(), 's', "%%getfunc_pointer%%", "&");
 	}
-	else
-	{
-		lmb::sed(m_gen_path.string(), 's', "%%getfunc_pointer%%", "*");
-	}
-
 
 	{
 		std::string insert_str = 
@@ -509,21 +553,9 @@ void GenCpp::Gen2()
 		lmb::sed(m_gen_path.string(), 'O', "%%initfunc_end%%", insert_str);
 	}
 
-	if (m_key_vec.size() > 0)
-	{
-		std::string insert_str = 
-		"const " + this->CalcDynamicType(0) + "& " + m_class_name + "::Get" + m_sub_class_name + "Container()\n" + 
-		"{\n" + 
-		"\treturn " + m_member_name + ";\n" + 
-		"}\n";
-		lmb::sed(m_gen_path.string(), 'O', "%%getfunc_container%%", insert_str);
-	}
-
 	lmb::sed(m_gen_path.string(), 'd', "%%initfunc_def_cfg%%", "");
-	lmb::sed(m_gen_path.string(), 'd', "%%getfunc_content%%", "");
 	lmb::sed(m_gen_path.string(), 'd', "%%initfunc_content%%", "");
 	lmb::sed(m_gen_path.string(), 'd', "%%initfunc_end%%", "");
-	lmb::sed(m_gen_path.string(), 's', "%%getfunc_args%%", "");
 }
 
 void GenCpp::Delete()
